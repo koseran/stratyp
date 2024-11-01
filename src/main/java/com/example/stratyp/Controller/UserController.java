@@ -3,6 +3,8 @@ package com.example.stratyp.Controller;
 import com.example.stratyp.*;
 import com.example.stratyp.Entity.User;
 import com.example.stratyp.Service.UserService;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,19 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/")
+@RequiredArgsConstructor
 public class UserController {
 
+    private final UserService userService;
 
-    @Autowired
-    private UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder; // Inject the PasswordEncoder
-
-    @PostMapping(value = "/addUser")
+    @PostMapping(value = "/adduser")
     public ResponseEntity<User> addUser(@RequestBody User user) {
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
         User savedUser = userService.save(user);
         return ResponseEntity.ok(savedUser);
     }

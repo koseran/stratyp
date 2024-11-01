@@ -15,6 +15,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
+
+import java.util.Locale;
 
 @Configuration
 @AllArgsConstructor
@@ -32,8 +36,11 @@ public class SecurityConfig {
 
     private static final String[] WHITE_LIST_URL = {
             "/",
-            "/addUser",
+            "/adduser",
             "/deleteUser",
+            "/login",
+            "/static/**",
+            "/bootstrap/**", "/css/**", "/js/**", "/images/**"
     };
 
     @Bean
@@ -55,26 +62,27 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())  // Disable CSRF protection for testing (not recommended for production)
                 .authorizeHttpRequests(request ->
                         request
-                                .requestMatchers(WHITE_LIST_URL).permitAll()  // Allow public access to /addUser
-                                .anyRequest().authenticated()               // All other requests require authentication
+                                .requestMatchers(WHITE_LIST_URL).permitAll()  // Allow public access to specified URLs
+                                .anyRequest().authenticated()  // All other requests require authentication
                 )
-                .formLogin(Customizer.withDefaults())  // Enable default form-based login
-                .httpBasic(Customizer.withDefaults());   // Enable HTTP Basic authentication
-
+                .formLogin(form ->
+                        form
+                                .loginPage("/login")  // Specify the custom login page
+                                .defaultSuccessUrl("/dashboard", true)  // Redirect here after a successful login
+                                .failureUrl("/login?error=true")  // Redirect here on login failure
+                                .permitAll()
+                )
+                .httpBasic(Customizer.withDefaults());  // Optional: Enable HTTP Basic authentication
 
         return http.build();
     }
 
+    @Bean
+    public LocaleResolver localeResolver() {
+        CookieLocaleResolver resolver = new CookieLocaleResolver();
+        resolver.setDefaultLocale(new Locale("el")); // Ορισμός των ελληνικών ως προεπιλογή
+        return resolver;
+    }
+    }
 
 
-
-    //    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http.csrf(csrf -> csrf.disable())  // Προσωρινή απενεργοποίηση του CSRF για Postman
-//                .authorizeHttpRequests(request -> request.anyRequest().permitAll()); // Απενεργοποίηση ελέγχου πρόσβασης
-//
-//        return http.build();
-//    }
-
-
-}

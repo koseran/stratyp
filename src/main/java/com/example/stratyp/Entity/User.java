@@ -12,8 +12,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-
+    @Column(nullable = false)
     private String name;
     @ManyToOne
     @JoinColumn(name = "rank_id") // Ορίζει το foreign key για τον βαθμό
@@ -25,8 +24,9 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role; // Χρησιμοποιούμε το Enum Role
-    @Column(unique = true)
+    @Column(unique = true , nullable = false)
     private String username;
+    @Column(nullable = false)
     private String password;
 
 
