@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+      <html lang="en">
+      <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Responsive Calendar with Multiple Day Selection</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .calendar-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .calendar-header {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .calendar-day {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60px;
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-size: 16px;
+    }
+
+    .calendar-day:hover {
+      background-color: #e9ecef;
+    }
+
+    .pinned {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .pinned:hover {
+      background-color: #0056b3;
+    }
+
+    .pinned-dates-list {
+      margin-top: 20px;
+    }
+
+    .list-group-item {
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+    }
+
+    .weekday-header {
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container my-5 calendar-container">
+  <h2 class="calendar-header">Responsive Calendar with Multiple Day Selection</h2>
+
+  <!-- Month and Year Selector -->
+  <select id="monthSelector" class="form-control mb-4">
+    <!-- Options will be populated dynamically -->
+  </select>
+
+  <!-- Calendar Grid -->
+  <div id="calendar" class="calendar-grid"></div>
+
+  <!-- Selected Dates -->
+  <div class="pinned-dates-list">
+    <h4>Pinned Dates:</h4>
+    <ul id="pinnedDates" class="list-group"></ul>
+  </div>
+</div>
+
+<script>
+  const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const calendarContainer = document.getElementById("calendar");
+  const pinnedDatesList = document.getElementById("pinnedDates");
+  const monthSelector = document.getElementById("monthSelector");
+  const pinnedDates = [];
+
+  // Fetch months and years from the database
+  async function fetchDeclarationMonths() {
+    try {
+      const response = await fetch('/api/declaration-months'); // Replace with your actual API endpoint
+      const data = await response.json();
+      return data; // Assuming the response is in the form of [{month: "01", year: "2024"}, ...]
+    } catch (error) {
+      console.error("Error fetching months:", error);
+      return [];
+    }
+  }
+
+  function populateMonthSelector(months) {
+    months.forEach(({ month, year }) => {
+      const option = document.createElement("option");
+      option.value = `${month}-${year}`;
+      option.textContent = `${month} ${year}`;
+      monthSelector.appendChild(option);
+    });
+  }
+
+  function clearCalendar() {
+    calendarContainer.innerHTML = "";
+    weekdays.forEach(day => {
+      const header = document.createElement("div");
+      header.className = "weekday-header";
+      header.textContent = day;
+      calendarContainer.appendChild(header);
+    });
+  }
+
+  function createDayCell(day) {
+    const cell = document.createElement("div");
+    cell.className = "calendar-day";
+    cell.textContent = day;
+    cell.onclick = () => togglePin(day, cell);
+    return cell;
+  }
+
+  function togglePin(day, cell) {
+    if (pinnedDates.includes(day)) {
+      pinnedDates.splice(pinnedDates.indexOf(day), 1);
+      cell.classList.remove("pinned");
+    } else {
+      pinnedDates.push(day);
+      cell.classList.add("pinned");
+    }
+    updatePinnedDatesList();
+  }
+
+  function updatePinnedDatesList() {
+    pinnedDatesList.innerHTML = "";
+    pinnedDates.forEach(date => {
+      const listItem = document.createElement("li");
+      listItem.className = "list-group-item";
+      listItem.textContent = `Day ${date} `;
+      pinnedDatesList.appendChild(listItem);
+    });
+  }
+
+  function populateCalendar(daysInMonth, firstDayOfMonth) {
+    // Add empty cells for alignment
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      const emptyCell = document.createElement("div");
+      emptyCell.className = "calendar-day";
+      calendarContainer.appendChild(emptyCell);
+    }
+
+    // Add day cells
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayCell = createDayCell(day);
+      calendarContainer.appendChild(dayCell);
+    }
+  }
+
+  function setupCalendar(month, year) {
+    const date = new Date(`${year}-${month}-01`);
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const firstDayOfMonth = date.getDay();
+    clearCalendar();
+    populateCalendar(daysInMonth, firstDayOfMonth);
+  }
+
+  monthSelector.addEventListener('change', () => {
+    const [month, year] = monthSelector.value.split("-");
+    setupCalendar(month, year);
+  });
+
+  async function init() {
+    const months = await fetchDeclarationMonths();
+    populateMonthSelector(months);
+
+    if (months.length > 0) {
+      const [initialMonth, initialYear] = months[0].month.split("-");
+      setupCalendar(initialMonth, initialYear);
+    }
+  }
+
+  init();
+</script>
+
+</body>
+</html>
+</title>
+</head>
+<body>
+
+</body>
+</html>

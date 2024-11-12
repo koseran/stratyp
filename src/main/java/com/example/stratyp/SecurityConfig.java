@@ -1,7 +1,7 @@
 package com.example.stratyp;
 
 
-import com.example.stratyp.Service.UserService;
+import com.example.stratyp.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -68,7 +68,7 @@ public class SecurityConfig {
                 .formLogin(form ->
                         form
                                 .loginPage("/login")  // Specify the custom login page
-                                .defaultSuccessUrl("/dashboard", true)  // Redirect here after a successful login
+                                .defaultSuccessUrl("/api/dashboard", true)  // Redirect here after a successful login
                                 .failureUrl("/login?error=true")  // Redirect here on login failure
                                 .permitAll()
                 )

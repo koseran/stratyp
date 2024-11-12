@@ -1,4 +1,4 @@
-package com.example.stratyp.Repository;
+package com.example.stratyp.repository;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
