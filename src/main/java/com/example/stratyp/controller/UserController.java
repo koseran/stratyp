@@ -1,11 +1,8 @@
-package com.example.stratyp.Controller;
+package com.example.stratyp.controller;
 
-import com.example.stratyp.*;
 import com.example.stratyp.Entity.User;
-import com.example.stratyp.Service.UserService;
-import lombok.AllArgsConstructor;
+import com.example.stratyp.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;

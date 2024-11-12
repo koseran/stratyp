@@ -1,7 +1,7 @@
-package com.example.stratyp.Service;
+package com.example.stratyp.service;
 
 import com.example.stratyp.Entity.User;
-import com.example.stratyp.Repository.UserRepository;
+import com.example.stratyp.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,6 +56,10 @@ public class UserService implements UserDetailsService {
         } else {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
+    }
+
+    public Optional<User> findByUsername(String name) {
+        return userRepository.findByUsername(name);
     }
 
     // Additional methods can be added as needed

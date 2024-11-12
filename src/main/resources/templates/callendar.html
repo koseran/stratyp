@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="el" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <title>Responsive Calendar</title>
+  <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/assets/css/Navbar-With-Button.css}">
+  <link rel="stylesheet" th:href="@{/assets/css/styles.css}">
+  <link rel="stylesheet" th:href="@{/assets/css/x-dropdown.css}">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    .calendar-container {
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .calendar-header {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .calendar-day {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60px;
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-size: 16px;
+    }
+
+    .calendar-day:hover {
+      background-color: #e9ecef;
+    }
+
+    .pinned {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .pinned:hover {
+      background-color: #0056b3;
+    }
+
+    .weekday-header {
+      font-weight: bold;
+      text-align: center;
+    }
+    #pinnedDatesList {
+      overflow-x: auto; /* Allows horizontal scrolling if content is too wide */
+      max-width: 100%; /* Keeps the container within the available width */
+    }
+
+    #pinnedDatesList table {
+      width: 100%; /* Table takes full width of container */
+      border-collapse: collapse; /* Removes gaps between table cells */
+      table-layout: auto; /* Adjusts column widths automatically */
+    }
+
+    #pinnedDatesList th, #pinnedDatesList td {
+      padding: 8px;
+      text-align: left;
+      word-wrap: break-word; /* Wraps long words to prevent overflow */
+    }
+
+    #pinnedDatesList th {
+      background-color: #f2f2f2;
+    }
+
+    #pinnedDatesList td {
+      border-bottom: 1px solid #ddd;
+    }
+
+    @media (max-width: 600px) {
+      /* On small screens, reduce font size and padding */
+      #pinnedDatesList th, #pinnedDatesList td {
+        font-size: 14px;
+        padding: 4px;
+      }
+    }
+
+
+
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-light navbar-expand-md py-3">
+  <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-bezier">
+                        <path fill-rule="evenodd" d="M0 10.5A1.5 1.5 0 0 1 1.5 9h1A1.5 1.5 0 0 1 4 10.5v1A1.5 1.5 0 0 1 2.5 13h-1A1.5 1.5 0 0 1 0 11.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm10.5.5A1.5 1.5 0 0 1 13.5 9h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zM6 4.5A1.5 1.5 0 0 1 7.5 3h1A1.5 1.5 0 0 1 10 4.5v1A1.5 1.5 0 0 1 8.5 7h-1A1.5 1.5 0 0 1 6 5.5v-1zM7.5 4a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"></path>
+                        <path d="M6 4.5H1.866a1 1 0 1 0 0 1h2.668A6.517 6.517 0 0 0 1.814 9H2.5c.123 0 .244.015.358.043a5.517 5.517 0 0 1 3.185-3.185A1.503 1.503 0 0 1 6 5.5v-1zm3.957 1.358A1.5 1.5 0 0 0 10 5.5v-1h4.134a1 1 0 1 1 0 1h-2.668a6.517 6.517 0 0 1 2.72 3.5H13.5c-.123 0-.243.015-.358.043a5.517 5.517 0 0 0-3.185-3.185z"></path>
+                    </svg></span><span>ΣΤΡΑΤΥΠ</span></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="navcol-1">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link active" href="#">Επιθυμίες Υπηρεσιών</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Αλλαγές Υπηρεσιών&nbsp;</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Ρυθμίσεις Λογαριασμού</a></li>
+      </ul><button class="btn btn-primary" type="button">Αποσύνδεση</button>
+    </div>
+  </div>
+</nav>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12"><strong><br>MK - Στρατιώτης (ΜΗΧ) Σαρανταυγάς Κωνσταντίνος<br><br></strong></div>
+  </div>
+</div>
+
+
+<div class="container my-5">
+  <div class="row">
+    <div class="alert alert-warning" role="alert" id="timeAlert">
+      This is a warning alert—check it out!
+    </div>
+    <!-- Calendar section -->
+    <div class="col-lg-7 mb-4">
+      <div class="calendar-container">
+        <h2 class="calendar-header" th:text="#{declerations_header.label}"></h2>
+
+        <div class="d-flex gap-3 my-3">
+          <select id="monthSelector" class="form-select" aria-label="Select month">
+            <!-- Options dynamically populated -->
+          </select>
+          <select id="reasonSelector" class="form-select" aria-label="Select year">
+            <option value="2023">Δεν επιθυμώ</option>
+            <option value="2024">Άδεια Μικράς Διάρκειας</option>
+            <option value="2024">Κανονική Άδεια</option>
+          </select>
+        </div>
+
+        <input type="text" id="declaration_comment" placeholder="Σχόλιο" class="form-control mb-4">
+
+        <div id="calendar" class="calendar-grid">
+          <!-- Calendar grid dynamically populated -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected Days Section -->
+    <div class="col-lg-5">
+      <div class="calendar-container">
+        <h4  th:text="#{declerations_pin.label}"></h4>
+        <div id="pinnedDatesList">
+          <p id="noDaysMessage">No days selected.</p>
+          <!-- Dynamically populated picked dates list -->
+        </div>
+        <button th:text="#{declaration_submit.label}" id="submitButton" class="btn btn-primary mt-3 d-none w-100"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container my-5">
+  <h2>Δηλωθέντες Επιθυμίες Υπηρεσιών</h2>
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover text-center">
+      <thead class="table-light">
+      <tr>
+        <th>Ημερομηνία από</th>
+        <th>Ημερομηνία έως</th>
+        <th>Ονοματεπώνυμο</th>
+        <th>Λόγος</th>
+        <th>Ενέργειες</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>Δευτέρα, 10/10/2024</td>
+        <td>Τρίτη, 11/10/2024</td>
+        <td>Σρτης (ΝΟΜ) Σαρανταυγάς Κωνσταντίνος</td>
+        <td>Άδεια Μικράς Διάρκειας</td>
+        <td><button class="btn btn-sm btn-danger">Διαγραφή</button></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const weekdays = ["Κυρ", "Δευ", "Τρ", "Τετ", "Πεμ", "Παρ", "Σαβ"];
+  const greekMonths = ["Ιαν", "Φεβ", "Μαρ", "Απρ", "Μαϊ", "Ιουν", "Ιουλ", "Αυγ", "Σεπ", "Οκτ", "Νοε", "Δεκ"];
+  const calendarContainer = document.getElementById("calendar");
+  const pinnedDatesList = document.getElementById("pinnedDatesList");
+  const monthSelector = document.getElementById("monthSelector");
+  const noDaysMessage = document.getElementById("noDaysMessage");
+  const submitButton = document.getElementById("submitButton");
+  const declarationCommentInput = document.getElementById("declaration_comment");
+  const reasonSelect = document.getElementById("reasonSelector");
+  const timeAlert = document.getElementById("timeAlert");
+  const daysSelect = document.querySelector("select");
+  let pinnedDates = [];
+  let maxDaysAllowed = 12;
+
+  async function fetchDeclarationMonths() {
+    try {
+      const response = await fetch('/api/user/declaration-months');
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching months:", error);
+      return [];
+    }
+  }
+
+  function populateMonthSelector(months) {
+    months.forEach(({ month, year, activeDate }) => {
+      const monthIndex = parseInt(month) - 1;
+      const option = document.createElement("option");
+      option.value = `${month}-${year}`;
+      option.textContent = `${greekMonths[monthIndex]} ${year}`;
+      option.dataset.activeDate = activeDate;
+      monthSelector.appendChild(option);
+    });
+  }
+
+  function clearCalendar() {
+    calendarContainer.innerHTML = "";
+    weekdays.forEach(day => {
+      const header = document.createElement("div");
+      header.className = "weekday-header";
+      header.textContent = day;
+      calendarContainer.appendChild(header);
+    });
+  }
+
+  function clearPinnedDates() {
+    pinnedDates = [];
+    updatePinnedDatesList();
+  }
+
+  monthSelector.addEventListener('change', () => {
+    const [month, year] = monthSelector.value.split("-");
+    clearPinnedDates();
+    setupCalendar(month, year);
+    updateTimeAlert();
+  });
+
+  function createDayCell(day, month, year) {
+    const cell = document.createElement("div");
+    cell.className = "calendar-day";
+    cell.textContent = day;
+    cell.onclick = () => togglePin(day, month, year, cell);
+    return cell;
+  }
+
+  function togglePin(day, month, year, cell) {
+    const dateObj = new Date(`${year}-${month}-${day}`);
+    const dateStr = `${weekdays[dateObj.getDay()]}, ${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+    const comment = declarationCommentInput.value || "-";
+    const optionSelected = reasonSelect.options[reasonSelect.selectedIndex].text;
+
+    const existingDateIndex = pinnedDates.findIndex(date => date.day === day && date.month === month && date.year === year);
+    if (existingDateIndex !== -1) {
+      pinnedDates.splice(existingDateIndex, 1);
+      cell.classList.remove("pinned");
+    } else {
+      if (pinnedDates.length >= maxDaysAllowed) {
+        alert(`Μπορείτε να επιλέξετε μέχρι ${maxDaysAllowed} ημέρες.`);
+        return;
+      }
+      pinnedDates.push({ day, month, year, dateStr, comment, option: optionSelected });
+      cell.classList.add("pinned");
+    }
+
+    updatePinnedDatesList();
+  }
+
+  function updatePinnedDatesList() {
+    pinnedDatesList.innerHTML = "";
+    if (pinnedDates.length === 0) {
+      noDaysMessage.classList.remove("d-none");
+      submitButton.classList.add("d-none");
+    } else {
+      noDaysMessage.classList.add("d-none");
+      submitButton.classList.remove("d-none");
+
+      const table = document.createElement("table");
+      const headerRow = document.createElement("tr");
+      headerRow.innerHTML = "<th>A/A</th><th>Ημέρα</th><th>Λόγος</th><th>Σχόλιο</th>";
+      table.appendChild(headerRow);
+
+      pinnedDates.forEach((date, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${index + 1}</td><td>${date.dateStr}</td><td>${date.option}</td><td>${date.comment}</td>`;
+        table.appendChild(row);
+      });
+
+      pinnedDatesList.appendChild(table);
+    }
+  }
+
+  function populateCalendar(daysInMonth, firstDayOfMonth, month, year) {
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      const emptyCell = document.createElement("div");
+      emptyCell.className = "calendar-day";
+      calendarContainer.appendChild(emptyCell);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayCell = createDayCell(day, month, year);
+      calendarContainer.appendChild(dayCell);
+    }
+  }
+
+  function setupCalendar(month, year) {
+    const date = new Date(`${year}-${month}-01`);
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const firstDayOfMonth = date.getDay();
+    clearCalendar();
+    populateCalendar(daysInMonth, firstDayOfMonth, month, year);
+  }
+
+  function updateTimeAlert() {
+    const selectedOption = monthSelector.options[monthSelector.selectedIndex];
+    const activeDate = selectedOption.dataset.activeDate;
+    if (activeDate) {
+      const formattedDate = new Date(activeDate).toLocaleString('el-GR', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+      });
+      timeAlert.textContent = `Ημερομηνία έναρξης δήλωσης: ${formattedDate}`;
+      timeAlert.classList.remove("d-none");
+    } else {
+      timeAlert.textContent = "Δεν βρέθηκε ενεργή ημερομηνία.";
+    }
+  }
+
+  async function init() {
+    const months = await fetchDeclarationMonths();
+    populateMonthSelector(months);
+
+    if (months.length > 0) {
+      const initialMonthYear = months[0];
+      setupCalendar(initialMonthYear.month, initialMonthYear.year);
+      console.log(initialMonthYear.users_active_date);
+      updateTimeAlert();
+    }
+  }
+
+  init();
+</script>
+
+</body>
+</html>
