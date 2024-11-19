@@ -2,34 +2,46 @@ package com.example.stratyp.controller;
 
 
 import com.example.stratyp.Entity.DeclarationMonths;
+import com.example.stratyp.Entity.User;
 import com.example.stratyp.repository.DeclarationMonthsRepository;
+import com.example.stratyp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
 import java.util.Date;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/api/user")
 public class DeclarationUserController {
 
     private final DeclarationMonthsRepository declarationMonthsRepository;
-    public DeclarationUserController(DeclarationMonthsRepository declarationMonthsRepository) {
+    private final UserService userService;
+    public DeclarationUserController(DeclarationMonthsRepository declarationMonthsRepository, UserService userService) {
         this.declarationMonthsRepository = declarationMonthsRepository;
+        this.userService = userService;
     }
 
+    @GetMapping("/declaration")
+    public String getCalendarPage(Model model, Principal principal) {
+        // Retrieve the logged-in user's username from Principal
+        String username = principal.getName();
+        System.out.println("Logged-in user: " + username);
 
-    @GetMapping("declaration")
-    public String getCalendarPage(Model model) {
-        DeclarationMonths activeDeclaration = declarationMonthsRepository.findByIsActive(true).get(0);
-        String monthDate = activeDeclaration.getMonth();  // Optional: keep if needed
-        Date usersActiveDate = activeDeclaration.getUsers_active_date();
+        // Fetch user details from your database/service
+        Optional<User> userOptional = userService.findByUsername(username);
 
-        model.addAttribute("userDate", monthDate);       // Keep if you need `monthDate`
-        model.addAttribute("usersActiveDate", usersActiveDate); // Pass `users_active_date` to the view
+        // Unwrap the Optional and handle if empty
+        User user = userOptional.orElse(null); // or provide a default User
 
-        return "callendar"; // Return the name of the HTML file without .html extension
+        // Add the User object to the model
+        model.addAttribute("user", user);
+
+        return "callendar"; // Ensure your template name is correct
     }
 }
+

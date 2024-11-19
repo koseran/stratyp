@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="el" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
@@ -119,7 +119,11 @@
 </nav>
 <div class="container">
   <div class="row">
-    <div class="col-md-12"><strong><br>MK - Στρατιώτης (ΜΗΧ) Σαρανταυγάς Κωνσταντίνος<br><br></strong></div>
+    <div class="col-md-12">
+      <strong>
+        <br th:text="${user.name} + ' - ' + ${user.rank.name} + ' (' +${user.unit.abbreviation}+ ') ' + ' - ' + ${user.name}"><br>
+      </strong>
+    </div>
   </div>
 </div>
 
@@ -127,7 +131,6 @@
 <div class="container my-5">
   <div class="row">
     <div class="alert alert-warning" role="alert" id="timeAlert">
-      This is a warning alert—check it out!
     </div>
     <!-- Calendar section -->
     <div class="col-lg-7 mb-4">
@@ -205,7 +208,6 @@
   const declarationCommentInput = document.getElementById("declaration_comment");
   const reasonSelect = document.getElementById("reasonSelector");
   const timeAlert = document.getElementById("timeAlert");
-  const daysSelect = document.querySelector("select");
   let pinnedDates = [];
   let maxDaysAllowed = 12;
 
@@ -221,12 +223,12 @@
   }
 
   function populateMonthSelector(months) {
-    months.forEach(({ month, year, activeDate }) => {
+    months.forEach(({ month, year, users_active_date }) => {
       const monthIndex = parseInt(month) - 1;
       const option = document.createElement("option");
       option.value = `${month}-${year}`;
       option.textContent = `${greekMonths[monthIndex]} ${year}`;
-      option.dataset.activeDate = activeDate;
+      option.dataset.activeDate = users_active_date; // Use users_active_date
       monthSelector.appendChild(option);
     });
   }
@@ -331,14 +333,25 @@
   function updateTimeAlert() {
     const selectedOption = monthSelector.options[monthSelector.selectedIndex];
     const activeDate = selectedOption.dataset.activeDate;
+
     if (activeDate) {
       const formattedDate = new Date(activeDate).toLocaleString('el-GR', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
       });
-      timeAlert.textContent = `Ημερομηνία έναρξης δήλωσης: ${formattedDate}`;
-      timeAlert.classList.remove("d-none");
+      let currentDay = new Date(); // Get the current date and time
+
+      if (new Date(activeDate) < currentDay) {
+        timeAlert.className = "alert alert-danger";
+        timeAlert.textContent = "Η ημερομηνία δήλωσης έχει περάσει.";
+        submitButton.disabled = true;
+      } else {
+        timeAlert.className = "alert alert-success";
+        timeAlert.textContent = `Η καταληκτική προθεσμία υποβολής δηλώσεων είναι: ${formattedDate}`;
+        submitButton.disabled = false;
+      }
     } else {
       timeAlert.textContent = "Δεν βρέθηκε ενεργή ημερομηνία.";
+      timeAlert.classList.remove("d-none");
     }
   }
 
@@ -349,7 +362,6 @@
     if (months.length > 0) {
       const initialMonthYear = months[0];
       setupCalendar(initialMonthYear.month, initialMonthYear.year);
-      console.log(initialMonthYear.users_active_date);
       updateTimeAlert();
     }
   }

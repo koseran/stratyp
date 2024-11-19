@@ -12,7 +12,7 @@ import java.util.Date;
  public class PreferenceDeclarations {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private Date startDate;
     private Date endDate;
     private String reason;
