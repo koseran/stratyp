@@ -1,7 +1,7 @@
-package com.example.stratyp;
+package com.example.stratyp.security;
 
 
-import com.example.stratyp.service.UserService;
+import com.example.stratyp.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -36,11 +36,8 @@ public class SecurityConfig {
 
     private static final String[] WHITE_LIST_URL = {
             "/",
-            "/adduser",
-            "/deleteUser",
             "/login",
-            "/static/**",
-            "/bootstrap/**", "/css/**", "/js/**", "/images/**"
+            "static/assets/bootstrap/**", "static/assets/bootstrap/**", "static/assets/bootstrap/css/**", "static/assets/bootstrap/js/**", "static/assets/bootstrap/images/**"
     };
 
     @Bean
@@ -68,7 +65,7 @@ public class SecurityConfig {
                 .formLogin(form ->
                         form
                                 .loginPage("/login")  // Specify the custom login page
-                                .defaultSuccessUrl("/api/dashboard", true)  // Redirect here after a successful login
+                                .defaultSuccessUrl("/api/user/declaration", true)  // Redirect here after a successful login
                                 .failureUrl("/login?error=true")  // Redirect here on login failure
                                 .permitAll()
                 )

@@ -1,8 +1,8 @@
-package com.example.stratyp.service;
+package com.example.stratyp.declaration;
 
 
-import com.example.stratyp.Entity.PreferenceDeclarations;
-import com.example.stratyp.repository.PreferenceDeclarationsRepository;
+import com.example.stratyp.declaration.PreferenceDeclarations;
+import com.example.stratyp.declaration.PreferenceDeclarationsRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

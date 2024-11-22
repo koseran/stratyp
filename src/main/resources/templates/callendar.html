@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
   <title>Responsive Calendar</title>
   <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
-  <link rel="stylesheet" th:href="@{/assets/css/Navbar-With-Button.css}">
-  <link rel="stylesheet" th:href="@{/assets/css/styles.css}">
-  <link rel="stylesheet" th:href="@{/assets/css/x-dropdown.css}">
+  <link rel="stylesheet" th:href="@{/assets/bootstrap/css/Navbar-With-Button.css}">
+  <link rel="stylesheet" th:href="@{/assets/bootstrap/css/styles.css}">
+  <link rel="stylesheet" th:href="@{/assets/bootstrap/css/x-dropdown.css}">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -121,7 +121,7 @@
   <div class="row">
     <div class="col-md-12">
       <strong>
-        <br th:text="${user.name} + ' - ' + ${user.rank.name} + ' (' +${user.unit.abbreviation}+ ') ' + ' - ' + ${user.name}"><br>
+        <br th:text="${user.kvd_sg.sgName} + ' - ' + ${user.rank.name} + ' (' +${user.unit.abbreviation}+ ') ' + ' - ' + ${user.name}"><br>
       </strong>
     </div>
   </div>
@@ -177,20 +177,24 @@
     <table class="table table-bordered table-hover text-center">
       <thead class="table-light">
       <tr>
-        <th>Ημερομηνία από</th>
-        <th>Ημερομηνία έως</th>
-        <th>Ονοματεπώνυμο</th>
-        <th>Λόγος</th>
+        <th>Ημερομηνία</th>
+        <th>Λεπτομέρειες</th>
+        <th>Τύπος Δήλωσης</th>
         <th>Ενέργειες</th>
       </tr>
       </thead>
       <tbody>
-      <tr>
-        <td>Δευτέρα, 10/10/2024</td>
-        <td>Τρίτη, 11/10/2024</td>
-        <td>Σρτης (ΝΟΜ) Σαρανταυγάς Κωνσταντίνος</td>
-        <td>Άδεια Μικράς Διάρκειας</td>
-        <td><button class="btn btn-sm btn-danger">Διαγραφή</button></td>
+      <!-- Thymeleaf iteration -->
+      <tr th:each="declaration : ${declarations}">
+        <td th:text="${#dates.format(declaration.declarationDate, 'EEEE, dd/MM/yyyy')}"></td>
+        <td th:text="${declaration.declarationDetails}"></td>
+        <td th:text="${declaration.declarationType}"></td>
+        <td>
+          <button class="btn btn-sm btn-danger"
+                  th:onclick="'/declarations/delete/' + ${declaration.id}">
+            Διαγραφή
+          </button>
+        </td>
       </tr>
       </tbody>
     </table>
@@ -210,6 +214,42 @@
   const timeAlert = document.getElementById("timeAlert");
   let pinnedDates = [];
   let maxDaysAllowed = 12;
+
+
+  submitButton.addEventListener('click', async () => {
+    // Collect all pinned dates, comment, reason, and formatted date with time
+    const pinnedData = pinnedDates.map(date => {
+      // Format the date for MySQL storage (YYYY-MM-DD HH:MM:SS format)
+      const formattedDate = new Date(`${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}T00:00:00`).toISOString().slice(0, 19).replace('T', ' ');
+
+      return {
+        declarationDate: formattedDate,       // MySQL-compatible datetime (single ISO format)
+        declarationType: date.option,        // Reason selected in dropdown
+        declarationDetails: date.comment || "Κανένα σχόλιο" // Comment from input
+      };
+    });
+
+    try {
+      const response = await fetch('/api/user/declaration/addDeclaration', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(pinnedData)
+      });
+
+      if (response.ok) {
+        alert('Data saved successfully!');
+      } else {
+        const result = await response.text();  // Λαμβάνουμε το μήνυμα λάθους ως κείμενο
+        alert(result);
+      }
+    } catch (error) {
+      console.error("Error saving data:", error);
+      alert('An error occurred while saving the data.');
+    }
+  });
+
 
   async function fetchDeclarationMonths() {
     try {
@@ -342,7 +382,7 @@
 
       if (new Date(activeDate) < currentDay) {
         timeAlert.className = "alert alert-danger";
-        timeAlert.textContent = "Η ημερομηνία δήλωσης έχει περάσει.";
+        timeAlert.textContent = "Η ημερομηνία δηλώσεων έχει παρέλθει. Δεν μπορείτε να υποβάλλετε δηλώσεις.";
         submitButton.disabled = true;
       } else {
         timeAlert.className = "alert alert-success";
@@ -367,6 +407,7 @@
   }
 
   init();
+
 </script>
 
 </body>

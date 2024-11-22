@@ -1,7 +1,7 @@
-package com.example.stratyp.service;
+package com.example.stratyp.user;
 
-import com.example.stratyp.Entity.User;
-import com.example.stratyp.repository.UserRepository;
+import com.example.stratyp.user.User;
+import com.example.stratyp.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +19,7 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
 
-    @Autowired
+
     private final UserRepository userRepository;
 
     public List<User> findAll() {

@@ -1,4 +1,4 @@
-package com.example.stratyp.Entity;
+package com.example.stratyp.user;
 
 
 import jakarta.persistence.*;

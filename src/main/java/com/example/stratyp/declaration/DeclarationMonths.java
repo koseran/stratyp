@@ -1,16 +1,14 @@
-package com.example.stratyp.Entity;
+package com.example.stratyp.declaration;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-@Entity(name = "declaration_months")
+@Entity
+@Table(name = "declaration_months")
 public class DeclarationMonths {
 
     @Id
@@ -20,6 +18,8 @@ public class DeclarationMonths {
     private String year;
     private Date users_active_date;
     private Date tmhmatarxhs_active_date;
+    private long maxMonthDeclaration;
     private boolean isActive;
+
 
 }

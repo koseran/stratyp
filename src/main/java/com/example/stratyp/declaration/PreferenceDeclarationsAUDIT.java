@@ -1,9 +1,9 @@
-package com.example.stratyp.Entity;
+package com.example.stratyp.declaration;
 
 
+import com.example.stratyp.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Date;
 

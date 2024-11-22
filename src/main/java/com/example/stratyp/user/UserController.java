@@ -1,7 +1,5 @@
-package com.example.stratyp.controller;
+package com.example.stratyp.user;
 
-import com.example.stratyp.Entity.User;
-import com.example.stratyp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;

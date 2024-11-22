@@ -1,10 +1,10 @@
 package com.example.stratyp.controller;
 
 
-import com.example.stratyp.Entity.PreferenceDeclarations;
-import com.example.stratyp.Entity.User;
-import com.example.stratyp.service.PreferenceDeclarationsService;
-import com.example.stratyp.service.UserService;
+import com.example.stratyp.declaration.PreferenceDeclarations;
+import com.example.stratyp.user.User;
+import com.example.stratyp.declaration.PreferenceDeclarationsService;
+import com.example.stratyp.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

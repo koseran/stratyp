@@ -1,8 +1,10 @@
-package com.example.stratyp.Entity;
+package com.example.stratyp.user;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
 @NoArgsConstructor
@@ -14,6 +16,10 @@ public class User {
     private Long id;
     @Column(nullable = false)
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "kvd_sg")
+    private StratologikaGrafeia kvd_sg;
     @ManyToOne
     @JoinColumn(name = "rank_id") // Ορίζει το foreign key για τον βαθμό
     private MilitaryRank rank;
@@ -28,8 +34,4 @@ public class User {
     private String username;
     @Column(nullable = false)
     private String password;
-
-
-
-
 }
