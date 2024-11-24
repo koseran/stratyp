@@ -1,5 +1,6 @@
 package com.example.stratyp.declaration;
 
+import com.example.stratyp.user.StratologikaGrafeia;
 import javafx.css.Declaration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,6 +23,8 @@ public interface DeclarationRepository extends JpaRepository<Declarations, Long>
 
     @Query("SELECT D FROM Declarations D " +
             "INNER JOIN D.user U " +
-            "WHERE U.kvd_sg.id = :userKvdId")
+            "WHERE U.kvd_sg.id = :userKvdId " +
+            "ORDER BY D.declarationDate ASC") // Κατά φθίνουσα σειρά, ή ASC για αύξουσα
     List<Declarations> findDeclarationsByASG(@Param("userKvdId") Long userKvdId);
+
 }

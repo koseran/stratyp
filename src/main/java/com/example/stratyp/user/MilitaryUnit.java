@@ -10,8 +10,8 @@ public class MilitaryUnit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;          // Όνομα μονάδας
-    private String abbreviation;   // Συντομογραφία
+    private String name;           // Όνομα μονάδας
+    private String abbreviation;    // Συντομογραφία
     private String description;    // Περιγραφή
 
     @ManyToOne

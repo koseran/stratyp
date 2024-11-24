@@ -173,20 +173,57 @@
 
 <div class="container my-5">
   <h2>Δηλωθέντες Επιθυμίες Υπηρεσιών</h2>
+
+  <!-- Filters Section -->
+  <div class="mb-3">
+    <form id="filters-form">
+      <div class="row">
+        <!-- Filter by Name -->
+        <div class="col-md-4">
+          <label for="filter-name" class="form-label">Φιλτράρισμα κατά Όνομα</label>
+          <select id="filter-name" class="form-select">
+            <option value="">Όλα</option>
+            <!-- Dynamically populate options using Thymeleaf -->
+            <option th:each="user : ${ASGUsers}" th:value="${user.name}" th:text="${user.rank.name} + ' (' +${user.unit.abbreviation}+ ') ' + ${user.name}"></option>
+          </select>
+        </div>
+
+        <!-- Filter by Date -->
+        <div class="col-md-4">
+          <label for="filter-date" class="form-label">Φιλτράρισμα κατά Ημερομηνία</label>
+          <input type="date" id="filter-date" class="form-control">
+        </div>
+
+        <!-- Filter by Type -->
+        <div class="col-md-4">
+          <label for="filter-type" class="form-label">Φιλτράρισμα κατά Τύπο</label>
+          <select id="filter-type" class="form-select">
+            <option value="">Όλα</option>
+            <!-- Dynamically populate options using Thymeleaf -->
+            <option th:each="type : ${declarationTypes}" th:value="${type}" th:text="${type}"></option>
+          </select>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table Section -->
   <div class="table-responsive">
     <table class="table table-bordered table-hover text-center">
       <thead class="table-light">
       <tr>
         <th>Ημερομηνία</th>
+        <th>Ονοματεπώνυμο</th>
         <th>Λεπτομέρειες</th>
         <th>Τύπος Δήλωσης</th>
         <th>Ενέργειες</th>
       </tr>
       </thead>
-      <tbody>
+      <tbody id="table-body">
       <!-- Thymeleaf iteration -->
-      <tr th:each="declaration : ${declarations}">
-        <td th:text="${#dates.format(declaration.declarationDate, 'EEEE, dd/MM/yyyy')}"></td>
+      <tr th:each="declaration : ${declarations}" class="declaration-row">
+        <td th:text="${#dates.format(declaration.declarationDate, 'yyyy-MM-dd')}"></td>
+        <td th:text="${declaration.user.name}"></td>
         <td th:text="${declaration.declarationDetails}"></td>
         <td th:text="${declaration.declarationType}"></td>
         <td>
@@ -200,6 +237,7 @@
     </table>
   </div>
 </div>
+
 
 <script>
   const weekdays = ["Κυρ", "Δευ", "Τρ", "Τετ", "Πεμ", "Παρ", "Σαβ"];
@@ -327,10 +365,18 @@
 
   function updatePinnedDatesList() {
     pinnedDatesList.innerHTML = "";
+
     if (pinnedDates.length === 0) {
       noDaysMessage.classList.remove("d-none");
       submitButton.classList.add("d-none");
     } else {
+      // Sort pinnedDates by year, month, and day in ascending order
+      pinnedDates.sort((a, b) => {
+        const dateA = new Date(`${a.year}-${a.month}-${a.day}`);
+        const dateB = new Date(`${b.year}-${b.month}-${b.day}`);
+        return dateA - dateB; // Ascending order
+      });
+
       noDaysMessage.classList.add("d-none");
       submitButton.classList.remove("d-none");
 
