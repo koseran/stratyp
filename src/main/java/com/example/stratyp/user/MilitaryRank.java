@@ -1,9 +1,7 @@
 package com.example.stratyp.user;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -12,5 +10,11 @@ import lombok.Data;
 public class MilitaryRank {
     @Id
     private Long id;
+
+    private String abbreviation;    // Συντομογραφία
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "branch_id") // Foreign key για τον κλάδο
+    private MilitaryBranch branch;  // Σχέση με τον κλάδο
 }

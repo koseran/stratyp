@@ -27,4 +27,6 @@ public interface DeclarationRepository extends JpaRepository<Declarations, Long>
             "ORDER BY D.declarationDate ASC") // Κατά φθίνουσα σειρά, ή ASC για αύξουσα
     List<Declarations> findDeclarationsByASG(@Param("userKvdId") Long userKvdId);
 
+
+
 }

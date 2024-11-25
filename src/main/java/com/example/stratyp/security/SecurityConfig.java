@@ -37,7 +37,7 @@ public class SecurityConfig {
     private static final String[] WHITE_LIST_URL = {
             "/",
             "/login",
-            "static/assets/bootstrap/**", "static/assets/bootstrap/**", "static/assets/bootstrap/css/**", "static/assets/bootstrap/js/**", "static/assets/bootstrap/images/**"
+            "/assets/bootstrap/**", "/assets/bootstrap/**", "/assets/bootstrap/css/**", "/assets/bootstrap/js/**", "/assets/images/**"
     };
 
     @Bean

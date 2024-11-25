@@ -12,8 +12,6 @@ public class MilitaryUnit {
     private Long id;
     private String name;           // Όνομα μονάδας
     private String abbreviation;    // Συντομογραφία
-    private String description;    // Περιγραφή
-
     @ManyToOne
     @JoinColumn(name = "branch_id") // Foreign key για τον κλάδο
     private MilitaryBranch branch;  // Σχέση με τον κλάδο

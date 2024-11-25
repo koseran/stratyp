@@ -22,5 +22,10 @@ public class DeclarationService {
         declarationRepository.save(declaration);
     }
 
+    public void deleteUserDeclaration(Declarations declaration) {
+        // Λογική για διαγραφή της δήλωσης
+        declarationRepository.delete(declaration);
+    }
+
 
 }

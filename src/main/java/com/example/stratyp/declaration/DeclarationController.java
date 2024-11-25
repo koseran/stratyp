@@ -3,12 +3,11 @@ package com.example.stratyp.declaration;
 import com.example.stratyp.user.User;
 import com.example.stratyp.user.UserRepository;
 import com.example.stratyp.user.UserService;
+import javafx.css.Declaration;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Calendar;
@@ -17,12 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
-@RestController
+@Controller
 @RequestMapping("/api/user")
 public class DeclarationController {
-
-
-
 
     private final DeclarationRepository declarationRepository;
 
@@ -30,6 +26,8 @@ public class DeclarationController {
 
     private final DeclarationService declarationService;
     private final UserService userService;
+
+
 
     @PostMapping("/declaration/addDeclaration")
     public ResponseEntity<String> savePinnedDates(@RequestBody List<Declarations> pinnedDateRequests, Principal principal) {
@@ -85,4 +83,18 @@ public class DeclarationController {
     }
 
 
+
+    @PostMapping("/declaration/delete/{id}")
+    public String deleteDeclaration(@PathVariable Long id) {
+        System.out.println("Deleting declaration with ID: " + id);
+        Declarations declaration = declarationRepository.findById(id).orElse(null);
+        if (declaration != null) {
+            declarationService.deleteUserDeclaration(declaration);
+            System.out.println("Deleted successfully.");
+            return "redirect:/api/user/declaration";
+        } else {
+            System.out.println("Declaration not found.");
+            return "error";
+        }
+    }
 }
