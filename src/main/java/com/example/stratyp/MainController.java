@@ -1,4 +1,4 @@
-package com.example.stratyp.controller;
+package com.example.stratyp;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,5 +9,7 @@ public class MainController {
     public String showLoginPage() {
         return "login";  // Thymeleaf template name (login.html)
     }
+
+
 
 }

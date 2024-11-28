@@ -1,9 +1,7 @@
 package com.example.stratyp.declaration;
 
 import com.example.stratyp.user.User;
-import com.example.stratyp.user.UserRepository;
 import com.example.stratyp.user.UserService;
-import javafx.css.Declaration;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,13 +19,9 @@ import java.util.Optional;
 public class DeclarationController {
 
     private final DeclarationRepository declarationRepository;
-
     private final DeclarationMonthsRepository declarationMonthsRepository;
-
     private final DeclarationService declarationService;
     private final UserService userService;
-
-
 
     @PostMapping("/declaration/addDeclaration")
     public ResponseEntity<String> savePinnedDates(@RequestBody List<Declarations> pinnedDateRequests, Principal principal) {
@@ -81,8 +75,6 @@ public class DeclarationController {
             return ResponseEntity.status(500).body("Σφάλμα κατά την αποθήκευση των δηλώσεων: " + e.getMessage());
         }
     }
-
-
 
     @PostMapping("/declaration/delete/{id}")
     public String deleteDeclaration(@PathVariable Long id) {

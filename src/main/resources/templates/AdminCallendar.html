@@ -9,6 +9,10 @@
     <link rel="stylesheet" th:href="@{/assets/bootstrap/css/styles.css}">
     <link rel="stylesheet" th:href="@{/assets/bootstrap/css/x-dropdown.css}">
     <style>
+        div .weekend {
+            background-color: #d3d3d3; /* Light grey background for weekends */
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
@@ -52,12 +56,12 @@
             background-color: #e9ecef;
         }
 
-        .pinned {
+        div .pinned {
             background-color: #007bff;
             color: white;
         }
 
-        .pinned:hover {
+        div .pinned:hover {
             background-color: #0056b3;
         }
 
@@ -70,6 +74,7 @@
             overflow-x: auto; /* Allows horizontal scrolling if content is too wide */
             max-width: 100%; /* Keeps the container within the available width */
         }
+
 
         #pinnedDatesList table {
             width: 100%; /* Table takes full width of container */
@@ -98,8 +103,6 @@
                 padding: 4px;
             }
         }
-
-
     </style>
 </head>
 <body>
@@ -126,6 +129,8 @@
         </div>
     </div>
 </nav>
+
+
 <div class="container">
     <div class="row">
         <div class="col-md-12">
@@ -141,8 +146,8 @@
     <div class="row">
         <div class="col-lg-12">
 
-        <div class="alert alert-warning " role="alert" id="timeAlert"></div>
-            </div>
+            <div class="alert alert-warning " role="alert" id="timeAlert"></div>
+        </div>
         <!-- Calendar section -->
         <div class="col-lg-7 mb-4">
 
@@ -242,7 +247,8 @@
                 <td th:text="${declaration.declarationType}"></td>
                 <td>
                     <!-- ALALZO ROLO SE PERIPOTSH POY XREAIZETAI -->
-                    <form th:action="@{'/api/user/declaration/delete/' + ${declaration.id}}" method="post" style="display: inline;">
+                    <form th:action="@{'/api/user/declaration/delete/' + ${declaration.id}}" method="post"
+                          style="display: inline;">
                         <button class="btn btn-sm btn-danger"
                                 th:if="${declaration.user.id} == ${user.id} OR ${declaration.user.role} == 'ADMIN'"
                                 type="submit">
@@ -258,7 +264,7 @@
 
 
 <script>
-    const weekdays = ["Κυρ", "Δευ", "Τρ", "Τετ", "Πεμ", "Παρ", "Σαβ"];
+    const weekdays = ["Δευ", "Τρ", "Τετ", "Πεμ", "Παρ", "Σαβ", "Κυρ"]; // Start with Monday
     const greekMonths = ["Ιαν", "Φεβ", "Μαρ", "Απρ", "Μαϊ", "Ιουν", "Ιουλ", "Αυγ", "Σεπ", "Οκτ", "Νοε", "Δεκ"];
     const calendarContainer = document.getElementById("calendar");
     const pinnedDatesList = document.getElementById("pinnedDatesList");
@@ -352,13 +358,20 @@
         updateTimeAlert();
     });
 
-    function createDayCell(day, month, year) {
-        const cell = document.createElement("div");
-        cell.className = "calendar-day";
-        cell.textContent = day;
-        cell.onclick = () => togglePin(day, month, year, cell);
-        return cell;
+function createDayCell(day, month, year) {
+    const cell = document.createElement("div");
+    cell.className = "calendar-day";
+    cell.textContent = day;
+
+    // Check if the day is Saturday (6) or Sunday (0)
+    const date = new Date(year, month - 1, day); // Adjust for zero-indexed months
+    if (date.getDay() === 6 || date.getDay() === 0) {
+        cell.classList.add("weekend"); // Add the 'weekend' class for Saturday and Sunday
     }
+
+    cell.onclick = () => togglePin(day, month, year, cell);
+    return cell;
+}
 
     function togglePin(day, month, year, cell) {
         const dateObj = new Date(`${year}-${month}-${day}`);
@@ -415,7 +428,10 @@
     }
 
     function populateCalendar(daysInMonth, firstDayOfMonth, month, year) {
-        for (let i = 0; i < firstDayOfMonth; i++) {
+        // Adjusting firstDayOfMonth for Monday as the first day
+        const adjustedFirstDay = (firstDayOfMonth === 0) ? 6 : firstDayOfMonth - 1; // Make Sunday (0) as Saturday (6)
+
+        for (let i = 0; i < adjustedFirstDay; i++) {
             const emptyCell = document.createElement("div");
             emptyCell.className = "calendar-day";
             calendarContainer.appendChild(emptyCell);
@@ -430,7 +446,7 @@
     function setupCalendar(month, year) {
         const date = new Date(`${year}-${month}-01`);
         const daysInMonth = new Date(year, month, 0).getDate();
-        const firstDayOfMonth = date.getDay();
+        const firstDayOfMonth = date.getDay();  // Sunday = 0, Monday = 1, ...
         clearCalendar();
         populateCalendar(daysInMonth, firstDayOfMonth, month, year);
     }

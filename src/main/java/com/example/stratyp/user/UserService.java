@@ -52,6 +52,7 @@ public class UserService implements UserDetailsService {
             return org.springframework.security.core.userdetails.User.builder()
                     .username(UserObj.getUsername())
                     .password(UserObj.getPassword())
+                    .roles(String.valueOf(UserObj.getRole()))
                     .build();
         } else {
             throw new UsernameNotFoundException("User not found with username: " + username);
@@ -62,5 +63,8 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(name);
     }
 
-    // Additional methods can be added as needed
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
 }

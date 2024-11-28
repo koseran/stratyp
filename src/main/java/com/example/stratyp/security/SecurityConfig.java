@@ -15,11 +15,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 import java.util.Locale;
-
 @Configuration
 @AllArgsConstructor
 @EnableWebSecurity
@@ -33,15 +33,19 @@ public class SecurityConfig {
         return userService;
     }
 
-
     private static final String[] WHITE_LIST_URL = {
             "/",
             "/login",
-            "/assets/bootstrap/**", "/assets/bootstrap/**", "/assets/bootstrap/css/**", "/assets/bootstrap/js/**", "/assets/images/**"
+            "/adduser",
+            "/error",
+            "/assets/bootstrap/**",
+            "/assets/bootstrap/css/**",
+            "/assets/bootstrap/js/**",
+            "/assets/images/**"
     };
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userService);
         provider.setPasswordEncoder(passwordEncoder());
@@ -52,7 +56,6 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -65,21 +68,30 @@ public class SecurityConfig {
                 .formLogin(form ->
                         form
                                 .loginPage("/login")  // Specify the custom login page
-                                .defaultSuccessUrl("/api/user/declaration", true)  // Redirect here after a successful login
                                 .failureUrl("/login?error=true")  // Redirect here on login failure
                                 .permitAll()
+                                .successHandler(authenticationSuccessHandler())  // Use custom authentication handler
                 )
                 .httpBasic(Customizer.withDefaults());  // Optional: Enable HTTP Basic authentication
 
         return http.build();
     }
 
-    @Bean
-    public LocaleResolver localeResolver() {
-        CookieLocaleResolver resolver = new CookieLocaleResolver();
-        resolver.setDefaultLocale(new Locale("el")); // Ορισμός των ελληνικών ως προεπιλογή
-        return resolver;
-    }
-    }
+    private AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return (request, response, authentication) -> {
+            var roles = authentication.getAuthorities();
+            System.out.println(roles);
+            roles.forEach(role -> System.out.println("Role: " + role.getAuthority())); // Debugging roles
 
-
+            if (roles.stream().anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"))) {
+                response.sendRedirect("/api/admin/declaration");
+            } else if (roles.stream().anyMatch(role -> role.getAuthority().equals("ROLE_USER"))) {
+                response.sendRedirect("/api/user/declaration");
+            } else if (roles.stream().anyMatch(role -> role.getAuthority().equals("ROLE_GRAFEIO_STRATOPEDOY"))) {
+                response.sendRedirect("/api/gstratopedoy/declaration");
+            } else {
+                response.sendRedirect("/");  // Default redirect
+            }
+        };
+    }
+}

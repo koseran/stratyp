@@ -20,4 +20,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT U FROM User U WHERE U.kvd_sg.id =:userKvdId")
     List<User> getAllAsgUsers(@Param("userKvdId") Long userKvdId);
-}
+
+ }

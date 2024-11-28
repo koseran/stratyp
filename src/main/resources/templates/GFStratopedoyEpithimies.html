@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Responsive Calendar</title>
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/Navbar-With-Button.css}">
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/x-dropdown.css}">
+    <style>
+        div .weekend {
+            background-color: #d3d3d3; /* Light grey background for weekends */
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .calendar-container {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar-header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .calendar-day {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+
+        .calendar-day:hover {
+            background-color: #e9ecef;
+        }
+
+        div .pinned {
+            background-color: #007bff;
+            color: white;
+        }
+
+        div .pinned:hover {
+            background-color: #0056b3;
+        }
+
+        .weekday-header {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #pinnedDatesList {
+            overflow-x: auto; /* Allows horizontal scrolling if content is too wide */
+            max-width: 100%; /* Keeps the container within the available width */
+        }
+
+
+        #pinnedDatesList table {
+            width: 100%; /* Table takes full width of container */
+            border-collapse: collapse; /* Removes gaps between table cells */
+            table-layout: auto; /* Adjusts column widths automatically */
+        }
+
+        #pinnedDatesList th, #pinnedDatesList td {
+            padding: 8px;
+            text-align: left;
+            word-wrap: break-word; /* Wraps long words to prevent overflow */
+        }
+
+        #pinnedDatesList th {
+            background-color: #f2f2f2;
+        }
+
+        #pinnedDatesList td {
+            border-bottom: 1px solid #ddd;
+        }
+
+        @media (max-width: 600px) {
+            /* On small screens, reduce font size and padding */
+            #pinnedDatesList th, #pinnedDatesList td {
+                font-size: 14px;
+                padding: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-light navbar-expand-md py-3">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <span class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-bezier">
+                    <path fill-rule="evenodd" d="M0 10.5A1.5 1.5 0 0 1 1.5 9h1A1.5 1.5 0 0 1 4 10.5v1A1.5 1.5 0 0 1 2.5 13h-1A1.5 1.5 0 0 1 0 11.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm10.5.5A1.5 1.5 0 0 1 13.5 9h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zM6 4.5A1.5 1.5 0 0 1 7.5 3h1A1.5 1.5 0 0 1 10 4.5v1A1.5 1.5 0 0 1 8.5 7h-1A1.5 1.5 0 0 1 6 5.5v-1zM7.5 4a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"></path>
+                    <path d="M6 4.5H1.866a1 1 0 1 0 0 1h2.668A6.517 6.517 0 0 0 1.814 9H2.5c.123 0 .244.015.358.043a5.517 5.517 0 0 1 3.185-3.185A1.503 1.503 0 0 1 6 5.5v-1zm3.957 1.358A1.5 1.5 0 0 0 10 5.5v-1h4.134a1 1 0 1 1 0 1h-2.668a6.517 6.517 0 0 1 2.72 3.5H13.5c-.123 0-.243.015-.358.043a5.517 5.517 0 0 0-3.185-3.185z"></path>
+                </svg>
+            </span>
+            <span>ΣΤΡΑΤΥΠ</span>
+        </a>
+        <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1">
+            <span class="visually-hidden">Toggle navigation</span>
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navcol-1">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="#" th:text="${nav_declerations.label}"></a></li>
+                <li class="nav-item"><a class="nav-link" href="#" th:text="${nav_changes.label}"></a></li>
+
+                <!-- Dropdown Menu -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item"><a class="nav-link" href="#" th:text="${nav_account_settings.label}"></a></li>
+            </ul>
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button class="btn btn-danger" type="submit">Αποσύνδεση</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <strong>
+                <br th:text="${user.kvd_sg.sgName} + ' - ' + ${user.rank.abbreviation} + ' (' +${user.unit.abbreviation}+ ')  '  + ${user.name}"><br>
+            </strong>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <h2>Δηλωθέντες Επιθυμίες Υπηρεσιών</h2>
+
+    <!-- Filters Section -->
+    <div class="mb-3">
+        <form id="filters-form">
+            <div class="row">
+                <!-- Filter by Name -->
+                <div class="col-md-4">
+                    <label for="filter-name" class="form-label">Φιλτράρισμα κατά Όνομα</label>
+                    <select id="filter-name" class="form-select">
+                        <option value="">Όλα</option>
+                        <!-- Dynamically populate options using Thymeleaf -->
+                        <option th:each="user : ${ASGUsers}" th:value="${user.name}"
+                                th:text="${user.rank.abbreviation} + ' (' +${user.unit.abbreviation}+ ') ' + ${user.name}"></option>
+                    </select>
+                </div>
+
+                <!-- Filter by Date -->
+                <div class="col-md-4">
+                    <label for="filter-date" class="form-label">Φιλτράρισμα κατά Ημερομηνία</label>
+                    <input type="date" id="filter-date" class="form-control">
+                </div>
+
+                <!-- Filter by Type -->
+                <div class="col-md-4">
+                    <label for="filter-type" class="form-label">Φιλτράρισμα κατά Τύπο</label>
+                    <select id="filter-type" class="form-select">
+                        <option value="">Όλα</option>
+                        <!-- Dynamically populate options using Thymeleaf -->
+                        <option th:each="type : ${declarationTypes}" th:value="${type}" th:text="${type}"></option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table Section -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-light">
+            <tr>
+                <th>Ημερομηνία</th>
+                <th>Ονοματεπώνυμο</th>
+                <th>Λεπτομέρειες</th>
+                <th>Τύπος Δήλωσης</th>
+                <th>Ενέργειες</th>
+            </tr>
+            </thead>
+            <tbody id="table-body">
+            <!-- Thymeleaf iteration -->
+            <tr th:each="declaration : ${declarations}" class="declaration-row">
+                <td th:text="${#dates.format(declaration.declarationDate, 'dd MMM yyyy')}"></td>
+                <td th:text="${user.rank.abbreviation} + ' (' +${user.unit.abbreviation}+ ') ' + ${user.name}"></td>
+                <td th:text="${declaration.declarationDetails}"></td>
+                <td th:text="${declaration.declarationType}"></td>
+                <td>
+                    <!-- ALALZO ROLO SE PERIPOTSH POY XREAIZETAI -->
+                    <form th:action="@{'/api/user/declaration/delete/' + ${declaration.id}}" method="post"
+                          style="display: inline;">
+                        <button class="btn btn-sm btn-danger"
+                                th:if="${declaration.user.id} == ${user.id} OR ${declaration.user.role} == 'ADMIN'"
+                                type="submit">
+                            Διαγραφή
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script>
+</script>
+
+</body>
+</html>

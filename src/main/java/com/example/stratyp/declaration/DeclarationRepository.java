@@ -1,7 +1,5 @@
 package com.example.stratyp.declaration;
 
-import com.example.stratyp.user.StratologikaGrafeia;
-import javafx.css.Declaration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
