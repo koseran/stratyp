@@ -8,7 +8,9 @@ import lombok.Data;
 @Entity
 @Table(name = "military_ranks")
 public class MilitaryRank {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Auto-increment
     private Long id;
 
     private String abbreviation;    // Συντομογραφία

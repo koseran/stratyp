@@ -1,6 +1,7 @@
 package com.example.stratyp.declaration;
 
 
+import com.example.stratyp.user.Role;
 import com.example.stratyp.user.User;
 import com.example.stratyp.user.UserService;
 import lombok.AllArgsConstructor;
@@ -24,12 +25,28 @@ public class PreferenceDeclarationsController {
     public void addPreferenceDeclaration(@RequestBody PreferenceDeclarations preferenceDeclarations, Principal principal) {
         // Fetch the authenticated user by username
         Optional<User> user = userService.findByUsername(principal.getName());
+
+        // Check if the user has a role that is not "USER"
         if (user.isPresent()) {
-            preferenceDeclarations.setUserID(user.get()); // Set the User object
-            preferenceDeclarationsService.savePreferenceDeclarations(preferenceDeclarations); // Save the entity
+            User authenticatedUser = user.get();
+            System.out.println(authenticatedUser.getRole());
+            // Check if the authenticated user is a "USER"
+            if (authenticatedUser.getRole() == Role.USER) {
+                // For "USER" role, perform specific logic
+                preferenceDeclarations.setUserID(authenticatedUser);
+                // Save the preference declaration
+                preferenceDeclarationsService.savePreferenceDeclarations(preferenceDeclarations);
+
+            } else {
+                // For admin or other roles (not "USER"), perform other logic
+                // Optionally, you can perform different actions based on the role
+                preferenceDeclarationsService.savePreferenceDeclarations(preferenceDeclarations); // Save the entity
+            }
         } else {
+            // Handle the case where the user is not found
             throw new RuntimeException("User not found");
         }
+
     }
 
 

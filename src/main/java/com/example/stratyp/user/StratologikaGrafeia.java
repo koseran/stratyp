@@ -10,7 +10,6 @@ import lombok.Data;
 public class StratologikaGrafeia {
 
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id; // πχ 241
     @Column(name = "sg_name", nullable = false, length = 100)
     private String sgName; // ΣΥ Αττικής

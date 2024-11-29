@@ -127,7 +127,7 @@
             <ul class="navbar-nav me-auto">
                 <!-- Dropdown for Επιθυμίες Υπηρεσιών -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Επιθυμίες Υπηρεσιών
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
@@ -157,13 +157,13 @@
     <div class="row">
         <div class="col-md-12">
             <strong>
-                <br th:text="${user.kvd_sg.sgName} + ' - ' + ${user.rank.abbreviation} + ' (' +${user.unit.abbreviation}+ ')  '  + ${user.name}"><br>
+                <br th:text="${user.kvd_sg.sgName} + ' - ' + ${user.rank.abbreviation} + ' (' +${user.unit.abbreviation}+ ')  '  + ${user.name} + ' (Γραφείο Στρατοπέδου)'"><br>
             </strong>
         </div>
     </div>
 </div>
 
-
+<!--Calendar -->
 <div class="container my-5">
     <div class="row">
         <div class="col-lg-12">
@@ -198,7 +198,7 @@
                     <!-- Dynamically generated options for all users -->
                     <option th:each="user : ${allUsers}"
                             th:value="${user.id}"
-                            th:text="${user.name}">
+                            th:text="${user.kvd_sg.sgName} + ' - ' + ${user.rank.abbreviation} + ' (' +${user.unit.abbreviation}+ ')  '  + ${user.name}">
                     </option>
                 </select>
 
@@ -225,7 +225,7 @@
     </div>
 </div>
 
-
+<!--ASG Declerations -->
 <div class="container my-5">
     <h2>Δηλωθέντες Επιθυμίες Υπηρεσιών</h2>
 
@@ -311,44 +311,47 @@
     const declarationCommentInput = document.getElementById("declaration_comment");
     const reasonSelect = document.getElementById("reasonSelector");
     const timeAlert = document.getElementById("timeAlert");
+    const selectedUser = document.getElementById("userSelector");
     let pinnedDates = [];
     let maxDaysAllowed = 12;
 
 
-    submitButton.addEventListener('click', async () => {
-        // Collect all pinned dates, comment, reason, and formatted date with time
-        const pinnedData = pinnedDates.map(date => {
-            // Format the date for MySQL storage (YYYY-MM-DD HH:MM:SS format)
-            const formattedDate = new Date(`${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}T00:00:00`).toISOString().slice(0, 19).replace('T', ' ');
+submitButton.addEventListener('click', async () => {
+    // Collect all pinned dates, comment, reason, and formatted date with time, along with the user
+    const pinnedData = pinnedDates.map(date => {
+        // Format the date for MySQL storage (YYYY-MM-DD HH:MM:SS format)
+        const formattedDate = new Date(`${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}T00:00:00`).toISOString().slice(0, 19).replace('T', ' ');
 
-            return {
-                declarationDate: formattedDate,       // MySQL-compatible datetime (single ISO format)
-                declarationType: date.option,        // Reason selected in dropdown
-                declarationDetails: date.comment || "Κανένα σχόλιο" // Comment from input
-            };
+        return {
+            declarationDate: formattedDate,       // MySQL-compatible datetime (single ISO format)
+            declarationType: date.option,        // Reason selected in dropdown
+            declarationDetails: date.comment || "Κανένα σχόλιο", // Comment from input
+            user: date.user // Include the user value
+        };
+    });
+
+    try {
+        const response = await fetch('/api/user/declaration/addDeclaration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(pinnedData)
         });
 
-        try {
-            const response = await fetch('/api/user/declaration/addDeclaration', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(pinnedData)
-            });
-
-            if (response.ok) {
-                alert('Data saved successfully!');
-                window.location.reload();
-            } else {
-                const result = await response.text();  // Λαμβάνουμε το μήνυμα λάθους ως κείμενο
-                alert(result);
-            }
-        } catch (error) {
-            console.error("Error saving data:", error);
-            alert('An error occurred while saving the data.');
+        if (response.ok) {
+            alert('Data saved successfully!');
+            window.location.reload();
+        } else {
+            const result = await response.text();  // Λαμβάνουμε το μήνυμα λάθους ως κείμενο
+            alert(result);
         }
-    });
+    } catch (error) {
+        console.error("Error saving data:", error);
+        alert('An error occurred while saving the data.');
+    }
+});
+
 
 
     async function fetchDeclarationMonths() {
@@ -410,59 +413,62 @@ function createDayCell(day, month, year) {
     return cell;
 }
 
-    function togglePin(day, month, year, cell) {
-        const dateObj = new Date(`${year}-${month}-${day}`);
-        const dateStr = `${weekdays[dateObj.getDay()]}, ${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
-        const comment = declarationCommentInput.value || "-";
-        const optionSelected = reasonSelect.options[reasonSelect.selectedIndex].text;
+function togglePin(day, month, year, cell) {
+    const dateObj = new Date(`${year}-${month}-${day}`);
+    const dateStr = `${weekdays[dateObj.getDay()]}, ${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+    const comment = declarationCommentInput.value || "-";
+    const optionSelected = reasonSelect.options[reasonSelect.selectedIndex].text;
+    const userId = selectedUser.value;  // Get the selected user ID
+    const userName = selectedUser.options[selectedUser.selectedIndex].text || "Άγνωστος Χρήστης";  // Get the user's name from the selected option
 
-        const existingDateIndex = pinnedDates.findIndex(date => date.day === day && date.month === month && date.year === year);
-        if (existingDateIndex !== -1) {
-            pinnedDates.splice(existingDateIndex, 1);
-            cell.classList.remove("pinned");
-        } else {
-            if (pinnedDates.length >= maxDaysAllowed) {
-                alert(`Μπορείτε να επιλέξετε μέχρι ${maxDaysAllowed} ημέρες.`);
-                return;
-            }
-            pinnedDates.push({day, month, year, dateStr, comment, option: optionSelected});
-            cell.classList.add("pinned");
+    const existingDateIndex = pinnedDates.findIndex(date => date.day === day && date.month === month && date.year === year);
+    if (existingDateIndex !== -1) {
+        pinnedDates.splice(existingDateIndex, 1);
+        cell.classList.remove("pinned");
+    } else {
+        if (pinnedDates.length >= maxDaysAllowed) {
+            alert(`Μπορείτε να επιλέξετε μέχρι ${maxDaysAllowed} ημέρες.`);
+            return;
         }
-
-        updatePinnedDatesList();
+        pinnedDates.push({ day, month, year, dateStr, comment, option: optionSelected, userName });
+        cell.classList.add("pinned");
     }
 
-    function updatePinnedDatesList() {
-        pinnedDatesList.innerHTML = "";
+    updatePinnedDatesList();
+}
 
-        if (pinnedDates.length === 0) {
-            noDaysMessage.classList.remove("d-none");
-            submitButton.classList.add("d-none");
-        } else {
-            // Sort pinnedDates by year, month, and day in ascending order
-            pinnedDates.sort((a, b) => {
-                const dateA = new Date(`${a.year}-${a.month}-${a.day}`);
-                const dateB = new Date(`${b.year}-${b.month}-${b.day}`);
-                return dateA - dateB; // Ascending order
-            });
 
-            noDaysMessage.classList.add("d-none");
-            submitButton.classList.remove("d-none");
+function updatePinnedDatesList() {
+    pinnedDatesList.innerHTML = "";
 
-            const table = document.createElement("table");
-            const headerRow = document.createElement("tr");
-            headerRow.innerHTML = "<th>A/A</th><th>Ημέρα</th><th>Λόγος</th><th>Σχόλιο</th>";
-            table.appendChild(headerRow);
+    if (pinnedDates.length === 0) {
+        noDaysMessage.classList.remove("d-none");
+        submitButton.classList.add("d-none");
+    } else {
+        // Sort pinnedDates by year, month, and day in ascending order
+        pinnedDates.sort((a, b) => {
+            const dateA = new Date(`${a.year}-${a.month}-${a.day}`);
+            const dateB = new Date(`${b.year}-${b.month}-${b.day}`);
+            return dateA - dateB; // Ascending order
+        });
 
-            pinnedDates.forEach((date, index) => {
-                const row = document.createElement("tr");
-                row.innerHTML = `<td>${index + 1}</td><td>${date.dateStr}</td><td>${date.option}</td><td>${date.comment}</td>`;
-                table.appendChild(row);
-            });
+        noDaysMessage.classList.add("d-none");
+        submitButton.classList.remove("d-none");
 
-            pinnedDatesList.appendChild(table);
-        }
+        const table = document.createElement("table");
+        const headerRow = document.createElement("tr");
+        headerRow.innerHTML = "<th>A/A</th><th>Ημέρα</th><th>Λόγος</th><th>Σχόλιο</th><th>Χρήστης</th>";
+        table.appendChild(headerRow);
+
+        pinnedDates.forEach((date, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td>${index + 1}</td><td>${date.dateStr}</td><td>${date.option}</td><td>${date.comment}</td><td>${date.userName}</td>`;
+            table.appendChild(row);
+        });
+
+        pinnedDatesList.appendChild(table);
     }
+}
 
     function populateCalendar(daysInMonth, firstDayOfMonth, month, year) {
         // Adjusting firstDayOfMonth for Monday as the first day
@@ -500,8 +506,8 @@ function createDayCell(day, month, year) {
 
             if (new Date(activeDate) < currentDay) {
                 timeAlert.className = "alert alert-danger";
-                timeAlert.textContent = "Η ημερομηνία δηλώσεων έχει παρέλθει. Δεν μπορείτε να υποβάλλετε δηλώσεις.";
-                submitButton.disabled = true;
+                timeAlert.textContent = "Η ημερομηνία δηλώσεων έχει παρέλθει. Μπορείτε να υποβάλεται δηλώσεις καθως είστε εξουσιοδοτημένος χρήστης (Γραφείο Στρατοπέδου)";
+
             } else {
                 timeAlert.className = "alert alert-success";
                 timeAlert.textContent = `Η καταληκτική προθεσμία υποβολής δηλώσεων είναι: ${formattedDate}`;
