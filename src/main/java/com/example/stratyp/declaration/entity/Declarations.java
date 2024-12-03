@@ -1,14 +1,11 @@
-package com.example.stratyp.declaration;
+package com.example.stratyp.declaration.entity;
 
-import com.example.stratyp.user.StratologikaGrafeia;
 import com.example.stratyp.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.hibernate.annotations.NotFound;
 
 import java.util.Date;
 

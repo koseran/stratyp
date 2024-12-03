@@ -1,5 +1,6 @@
-package com.example.stratyp.declaration;
+package com.example.stratyp.declaration.repository;
 
+import com.example.stratyp.declaration.entity.DeclarationMonths;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

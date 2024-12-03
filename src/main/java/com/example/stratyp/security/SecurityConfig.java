@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,6 +24,7 @@ import java.util.Locale;
 @Configuration
 @AllArgsConstructor
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -87,8 +89,8 @@ public class SecurityConfig {
                 response.sendRedirect("/api/admin/declaration");
             } else if (roles.stream().anyMatch(role -> role.getAuthority().equals("ROLE_USER"))) {
                 response.sendRedirect("/api/user/declaration");
-            } else if (roles.stream().anyMatch(role -> role.getAuthority().equals("ROLE_GRAFEIO_STRATOPEDOY"))) {
-                response.sendRedirect("/api/gstratopedoy/declaration");
+            } else if (roles.stream().anyMatch(role -> role.getAuthority().equals("ROLE_MILITARY_OFFICE_MANAGER"))) {
+                response.sendRedirect("/api/militaryoffice/declaration");
             } else {
                 response.sendRedirect("/");  // Default redirect
             }

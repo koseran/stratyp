@@ -1,5 +1,9 @@
-package com.example.stratyp.declaration;
+package com.example.stratyp.declaration.controller;
 
+import com.example.stratyp.declaration.repository.DeclarationMonthsRepository;
+import com.example.stratyp.declaration.repository.DeclarationRepository;
+import com.example.stratyp.declaration.service.DeclarationService;
+import com.example.stratyp.declaration.entity.Declarations;
 import com.example.stratyp.user.User;
 import com.example.stratyp.user.UserService;
 import lombok.AllArgsConstructor;

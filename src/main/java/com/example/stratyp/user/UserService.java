@@ -4,6 +4,7 @@ import com.example.stratyp.user.User;
 import com.example.stratyp.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -48,12 +49,19 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent()) {
-            var UserObj = user.get();
-            return org.springframework.security.core.userdetails.User.builder()
-                    .username(UserObj.getUsername())
-                    .password(UserObj.getPassword())
-                    .roles(String.valueOf(UserObj.getRole()))
+            var userObj = user.get();
+
+            // Assuming user.getRole() is a string representing the role (e.g., "USER", "ADMIN")
+            // We prefix "ROLE_" to the role name to follow Spring Security's default conventions.
+            String role = "ROLE_" + userObj.getRole();  // If getRole() returns "USER", we create "ROLE_USER"
+            System.out.println("edo eisai" + role);
+            org.springframework.security.core.userdetails.User u = (org.springframework.security.core.userdetails.User) org.springframework.security.core.userdetails.User.builder()
+                    .username(userObj.getUsername())
+                    .password(userObj.getPassword())
+                    .authorities(List.of(new SimpleGrantedAuthority(role)) ) // Use SimpleGrantedAuthority to define roles
                     .build();
+
+            return u;
         } else {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }

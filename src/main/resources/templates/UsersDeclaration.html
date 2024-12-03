@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Responsive Calendar</title>
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/Navbar-With-Button.css}">
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/x-dropdown.css}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .form-label {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #0078ff;
+            border: none;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+        .filter-section {
+            background-color: #ffffff;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        table thead {
+            background-color: #0078ff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<!--Navbar -->
+<nav class="navbar navbar-light navbar-expand-md py-3">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <span class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"
+                     class="bi bi-bezier">
+                    <path fill-rule="evenodd"
+                          d="M0 10.5A1.5 1.5 0 0 1 1.5 9h1A1.5 1.5 0 0 1 4 10.5v1A1.5 1.5 0 0 1 2.5 13h-1A1.5 1.5 0 0 1 0 11.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm10.5.5A1.5 1.5 0 0 1 13.5 9h1a1.5 1.5 0 0 1 1.5 1.5v1a.5.5 0 0 1-1.5 1.5h-1a.5.5 0 0 1-1.5-1.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zM6 4.5A1.5 1.5 0 0 1 7.5 3h1A1.5 1.5 0 0 1 10 4.5v1A1.5 1.5 0 0 1 8.5 7h-1A1.5 1.5 0 0 1 6 5.5v-1zM7.5 4a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"></path>
+                    <path d="M6 4.5H1.866a1 1 0 1 0 0 1h2.668A6.517 6.517 0 0 0 1.814 9H2.5c.123 0 .244.015.358.043a5.517 5.517 0 0 1 3.185-3.185A1.503 1.503 0 0 1 6 5.5v-1zm3.957 1.358A1.5 1.5 0 0 0 10 5.5v-1h4.134a1 1 0="></path>
+                </svg>
+            </span>
+            <span>ΣΤΡΑΤΥΠ</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navcol-1"
+                aria-controls="navcol-1" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navcol-1">
+            <ul class="navbar-nav me-auto">
+                <!-- Υπηρεσίες Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <span th:text="#{navbar.services}"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                        <li><a class="dropdown-item" th:text="#{navbar.services.desires}"
+                               th:href="@{/api/militaryoffice/declaration}"></a></li>
+                        <li><a class="dropdown-item" th:text="#{navbar.services.userDesires}"
+                               th:href="@{/api/militaryoffice/declaration}"></a></li>
+                        <li><a class="dropdown-item" th:text="#{navbar.services.changes}"
+                               th:href="@{/api/militaryoffice/declaration}"></a></li>
+                        <li><a class="dropdown-item" th:text="#{navbar.services.requests}"
+                               th:href="@{/api/militaryoffice/declaration}"></a></li>
+                    </ul>
+                </li>
+                <!-- Χρήστες Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="usersDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <span th:text="#{navbar.users}"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="usersDropdown">
+                        <li><a class="dropdown-item" th:text="#{navbar.users.configuration}" href="#"></a></li>
+                    </ul>
+                </li>
+                <!-- Ρυθμίσεις Λογαριασμού -->
+                <li class="nav-item">
+                    <a class="nav-link" th:text="#{navbar.accountSettings}" href="#"></a>
+                </li>
+            </ul>
+            <form action="/logout" method="post" style="display: inline;">
+                <button class="btn btn-danger" type="submit">Αποσύνδεση</button>
+            </form>
+        </div>
+    </div>
+</nav>
+<!--Name Navbar -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <strong>
+                <br th:text="${user.kvd_sg.sgName} + ' - ' + ${user.rank.abbreviation} + ' (' +${user.unit.abbreviation}+ ')  '  + ${user.name} + '  ' + ${user.getRole().getDisplayName()}"><br>
+            </strong>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Section -->
+<div class="container mt-3 mb-3">
+
+    <div class="filter-section mb-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="text-center mb-4" style="font-size: 26px; font-weight: bold; color: #007bff;">Φιλτράρισμα Δηλώσεων</h2>
+
+                <form id="filterForm" method="GET" action="/filter-declarations">
+                    <div class="row g-3">
+                        <!-- Ονόματα Στελέχους -->
+                        <div class="col-md-4">
+                            <label for="staffName" class="form-label">Ονόματα Στελέχους</label>
+                            <input type="text" class="form-control" id="staffName" name="staff_name" placeholder="Εισάγετε ονόματα στελέχους">
+                        </div>
+                        <!-- Υπηρεσιακός Ρόλος -->
+                        <div class="col-md-4">
+                            <label for="serviceRole" class="form-label">Υπηρεσιακός Ρόλος</label>
+                            <input type="text" class="form-control" id="serviceRole" name="service_role" placeholder="Εισάγετε ρόλο">
+                        </div>
+                        <!-- Μονάδα Υπηρεσίας -->
+                        <div class="col-md-4">
+                            <label for="serviceUnit" class="form-label">Μονάδα Υπηρεσίας</label>
+                            <select class="form-select" id="serviceUnit" name="service_unit">
+                                <option value="">Επιλέξτε Μονάδα</option>
+                                <option value="Unit1">Μονάδα 1</option>
+                                <option value="Unit2">Μονάδα 2</option>
+                                <option value="Unit3">Μονάδα 3</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-3">
+                        <!-- Ημερομηνία Δήλωσης Από -->
+                        <div class="col-md-6">
+                            <label for="declarationDateFrom" class="form-label">Ημερομηνία Δήλωσης από</label>
+                            <input type="date" class="form-control" id="declarationDateFrom" name="declaration_date_from">
+                        </div>
+                        <!-- Ημερομηνία Δήλωσης Έως -->
+                        <div class="col-md-6">
+                            <label for="declarationDateTo" class="form-label">Ημερομηνία Δήλωσης έως</label>
+                            <input type="date" class="form-control" id="declarationDateTo" name="declaration_date_to">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-3">
+                        <!-- Λόγος Δήλωσης -->
+                        <div class="col-md-6">
+                            <label for="declarationReason" class="form-label">Λόγος Δήλωσης</label>
+                            <input type="text" class="form-control" id="declarationReason" name="declaration_reason" placeholder="Εισάγετε λόγο δήλωσης">
+                        </div>
+                        <!-- Σχόλια Δηλώσεων -->
+                        <div class="col-md-6">
+                            <label for="declarationComments" class="form-label">Σχόλια Δηλώσεων</label>
+                            <input type="text" class="form-control" id="declarationComments" name="declaration_comments" placeholder="Εισάγετε σχόλια">
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col text-center">
+                            <button type="submit" class="btn btn-primary btn-lg px-4">Φιλτράρισμα</button>
+                            <button type="reset" class="btn btn-secondary btn-lg px-4">Καθαρισμός</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Πίνακας Αποτελεσμάτων -->
+    <table class="table table-bordered table-striped">
+        <thead class="table-primary">
+        <tr>
+            <th>Όνομα Στελέχους</th>
+            <th>Ημερομηνία Δήλωσης</th>
+            <th>Τύπος Δήλωσης</th>
+            <th>Λεπτομέρειες Δήλωσης</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Example row -->
+        <tr>
+            <td>Γιάννης Παπαδόπουλος</td>
+            <td>2024-12-01 14:30:00</td>
+            <td>Τύπος 1</td>
+            <td>Λεπτομέρειες 1</td>
+        </tr>
+        <!-- Τα δεδομένα προστίθενται δυναμικά -->
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

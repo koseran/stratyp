@@ -1,5 +1,7 @@
-package com.example.stratyp.declaration;
+package com.example.stratyp.declaration.service;
 
+import com.example.stratyp.declaration.entity.Declarations;
+import com.example.stratyp.declaration.repository.DeclarationRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

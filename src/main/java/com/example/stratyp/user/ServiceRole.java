@@ -13,10 +13,8 @@ public class ServiceRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false)
     private String roleName;
-    @Column(nullable = false)
-    private Boolean isActive;
+    private String abbreviation;
 
 }

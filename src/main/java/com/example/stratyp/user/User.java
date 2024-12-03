@@ -15,12 +15,22 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String name;
 
     @ManyToOne
     @JoinColumn(name = "kvd_sg")
     private StratologikaGrafeia kvd_sg;
+
+    @ManyToOne
+    @JoinColumn(name = "service_role_id")
+    private ServiceRole serviceRoleId;
+
+    @ManyToOne
+    @JoinColumn(name = "service_military_unit")
+    private ServiceMilitaryUnit serviceMilitaryUnit;
+
     @ManyToOne
     @JoinColumn(name = "rank_id") // Ορίζει το foreign key για τον βαθμό
     private MilitaryRank rank;
@@ -31,8 +41,10 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role; // Χρησιμοποιούμε το Enum Role
+
     @Column(unique = true , nullable = false)
     private String username;
+
     @Column(nullable = false)
     private String password;
 }

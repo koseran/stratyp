@@ -1,7 +1,7 @@
-package com.example.stratyp.declaration;
+package com.example.stratyp.declaration.controller;
 
-import com.example.stratyp.declaration.DeclarationMonths;
-import com.example.stratyp.declaration.DeclarationMonthsRepository;
+import com.example.stratyp.declaration.entity.DeclarationMonths;
+import com.example.stratyp.declaration.repository.DeclarationMonthsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
