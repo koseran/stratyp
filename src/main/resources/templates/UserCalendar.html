@@ -130,16 +130,9 @@
     </div>
 </nav>
 
+<!--Name Navbar -->
+<header th:replace="fragments/navbar :: navbar(${user})"></header>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <strong>
-                <br th:text="${user.kvd_sg.sgName} + ' - ' + ${user.rank.abbreviation} + ' (' +${user.unit.abbreviation}+ ')  '  + ${user.name}"><br>
-            </strong>
-        </div>
-    </div>
-</div>
 
 
 <div class="container my-5">

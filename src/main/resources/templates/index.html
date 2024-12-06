@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Table</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .color-dot {
+          display: inline-block;
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+          margin: 0 auto;
+        }
+        .bg-success { background-color: #198754 !important; }
+        .bg-danger { background-color: #dc3545 !important; }
+        .bg-warning { background-color: #ffc107 !important; }
+        .table-responsive { margin-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <h1 class="text-center">Security Schedule</h1>
+
+    <!-- Responsive Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered text-center">
+            <thead>
+            <tr>
+                <th>Στελέχη</th>
+                <!-- Generate days of the month -->
+                <!-- Example with 31 days -->
+                <th>1</th>
+                <th>2</th>
+                <th>3</th>
+                <th>4</th>
+                <th>5</th>
+                <th>6</th>
+                <th>7</th>
+                <th>8</th>
+                <th>9</th>
+                <th>10</th>
+                <th>...</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Example Rows -->
+            <tr>
+                <td>Γιάννης</td>
+                <td><span class="color-dot bg-success" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Επιθυμία"></span></td>
+                <td><span class="color-dot bg-danger" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Μη Επιθυμία"></span></td>
+                <td><span class="color-dot bg-warning" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Ειδική Δήλωση"></span></td>
+                <td><span class="color-dot bg-success" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Επιθυμία"></span></td>
+                <td><span class="color-dot bg-danger" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Μη Επιθυμία"></span></td>
+                <td><span class="color-dot bg-warning" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Ειδική Δήλωση"></span></td>
+                <td><span class="color-dot bg-success" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Επιθυμία"></span></td>
+                <td><span class="color-dot bg-danger" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Μη Επιθυμία"></span></td>
+                <td><span class="color-dot bg-warning" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Ειδική Δήλωση"></span></td>
+            </tr>
+            <tr>
+                <td>Μαρία</td>
+                <td><span class="color-dot bg-warning" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Ειδική Δήλωση"></span></td>
+                <td><span class="color-dot bg-success" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Επιθυμία"></span></td>
+                <td><span class="color-dot bg-danger" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Μη Επιθυμία"></span></td>
+                <td><span class="color-dot bg-success" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Επιθυμία"></span></td>
+                <td><span class="color-dot bg-warning" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Ειδική Δήλωση"></span></td>
+                <td><span class="color-dot bg-danger" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Μη Επιθυμία"></span></td>
+                <td><span class="color-dot bg-success" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Επιθυμία"></span></td>
+                <td><span class="color-dot bg-warning" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Ειδική Δήλωση"></span></td>
+                <td><span class="color-dot bg-danger" data-bs-toggle="modal" data-bs-target="#declarationModal" title="Μη Επιθυμία"></span></td>
+            </tr>
+            <!-- Add more rows for all employees -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal for Viewing/Adding Declarations -->
+<div class="modal fade" id="declarationModal" tabindex="-1" aria-labelledby="declarationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="declarationModalLabel">Πληροφορίες Δήλωσης</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="declarationType" class="form-label">Τύπος Δήλωσης</label>
+                        <select class="form-select" id="declarationType">
+                            <option>Επιθυμία</option>
+                            <option>Μη Επιθυμία</option>
+                            <option>Ειδική Δήλωση</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="declarationDetails" class="form-label">Λεπτομέρειες</label>
+                        <textarea class="form-control" id="declarationDetails" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Αποθήκευση</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

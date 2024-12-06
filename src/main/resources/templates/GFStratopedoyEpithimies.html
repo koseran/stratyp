@@ -106,6 +106,7 @@
     </style>
 </head>
 <body>
+
 <nav class="navbar navbar-light navbar-expand-md py-3">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="#">
@@ -147,17 +148,8 @@
         </div>
     </div>
 </nav>
-
-
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <strong>
-                <br th:text="${user.kvd_sg.sgName} + ' - ' + ${user.rank.abbreviation} + ' (' +${user.unit.abbreviation}+ ')  '  + ${user.name}"><br>
-            </strong>
-        </div>
-    </div>
-</div>
+<!--Name Navbar -->
+<header th:replace="fragments/navbar :: navbar(${user})"></header>
 
 <div class="container my-5">
     <h2>Δηλωθέντες Επιθυμίες Υπηρεσιών</h2>

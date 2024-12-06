@@ -1,0 +1,59 @@
+<div class="card mb-3" th:fragment="filterFormFragment">
+  <div class="card-body">
+    <h2 class="text-center mb-4 text-primary">Φιλτράρισμα Δηλώσεων</h2>
+    <form id="filterForm" method="GET" action="/filter-declarations">
+      <div class="row g-2">
+        <div class="col-md-4">
+          <label for="staffName" class="form-label">Ονόματα Στελέχους</label>
+          <input type="text" class="form-control" id="staffName" name="staff_name"
+                 placeholder="Εισάγετε ονόματα στελέχους">
+        </div>
+        <div class="col-md-4">
+          <label for="serviceRole" class="form-label">Υπηρεσιακός Ρόλος</label>
+          <select class="form-select" id="serviceRole" name="service_role">
+            <option value="">Επιλέξτε Μονάδα</option>
+            <option value="Unit1">Μονάδα 1</option>
+            <option value="Unit2">Μονάδα 2</option>
+            <option value="Unit3">Μονάδα 3</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="serviceUnit" class="form-label">Μονάδα Υπηρεσίας</label>
+          <select class="form-select" id="serviceUnit" name="service_unit">
+            <option value="">Επιλέξτε Μονάδα</option>
+            <option value="Unit1">Μονάδα 1</option>
+            <option value="Unit2">Μονάδα 2</option>
+            <option value="Unit3">Μονάδα 3</option>
+          </select>
+        </div>
+      </div>
+      <div class="row g-2 mt-3">
+        <div class="col-md-6">
+          <label for="declarationDateFrom" class="form-label">Ημερομηνία Δήλωσης από</label>
+          <input type="date" class="form-control" id="declarationDateFrom"
+                 name="declaration_date_from">
+        </div>
+        <div class="col-md-6">
+          <label for="declarationDateTo" class="form-label">Ημερομηνία Δήλωσης έως</label>
+          <input type="date" class="form-control" id="declarationDateTo" name="declaration_date_to">
+        </div>
+      </div>
+      <div class="row g-2 mt-3">
+        <div class="col-md-6">
+          <label for="declarationReason" class="form-label">Λόγος Δήλωσης</label>
+          <input type="text" class="form-control" id="declarationReason" name="declaration_reason"
+                 placeholder="Εισάγετε λόγο δήλωσης">
+        </div>
+        <div class="col-md-6">
+          <label for="declarationComments" class="form-label">Σχόλια Δηλώσεων</label>
+          <input type="text" class="form-control" id="declarationComments" name="declaration_comments"
+                 placeholder="Εισάγετε σχόλια">
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary">Φιλτράρισμα</button>
+        <button type="reset" class="btn btn-secondary">Καθαρισμός</button>
+      </div>
+    </form>
+  </div>
+</div>

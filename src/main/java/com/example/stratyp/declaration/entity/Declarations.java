@@ -28,8 +28,9 @@ public class Declarations {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") // Μορφή για την ημερομηνία από το JSON
     private Date declarationDate;
 
-    @NonNull
-    private String declarationType;
+    @ManyToOne
+    @JoinColumn(name = "declaration_type_id", nullable = false)
+    private DeclarationType declarationType;
 
     private String declarationDetails;
 

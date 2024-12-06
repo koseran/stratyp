@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Responsive Calendar</title>
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/Navbar-With-Button.css}">
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/assets/bootstrap/css/x-dropdown.css}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .filter-section {
+            background-color: #ffffff;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+                .calendar-day {
+            border: 1px solid #ddd;
+            height: 100px;
+            text-align: center;
+            vertical-align: top;
+            padding: 5px;
+        }
+        .calendar-header {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            text-align: center;
+        }
+        .empty-day {
+            background-color: #f8f9fa;
+        }
+
+        .color-dot {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        margin: 0 auto;
+        }
+    .bg-success { background-color: #198754 !important; }
+    .bg-danger { background-color: #dc3545 !important; }
+    .bg-warning { background-color: #ffc107 !important; }
+    .table-responsive { margin-top: 20px; }
+
+    </style>
+</head>
+<body>
+
+<!--Navbar -->
+<nav class="navbar navbar-light navbar-expand-md py-3">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <span class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"
+                     class="bi bi-bezier">
+                    <path fill-rule="evenodd"
+                          d="M0 10.5A1.5 1.5 0 0 1 1.5 9h1A1.5 1.5 0 0 1 4 10.5v1A1.5 1.5 0 0 1 2.5 13h-1A1.5 1.5 0 0 1 0 11.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm10.5.5A1.5 1.5 0 0 1 13.5 9h1a1.5 1.5 0 0 1 1.5 1.5v1a.5.5 0 0 1-1.5 1.5h-1a.5.5 0 0 1-1.5-1.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zM6 4.5A1.5 1.5 0 0 1 7.5 3h1A1.5 1.5 0 0 1 10 4.5v1A1.5 1.5 0 0 1 8.5 7h-1A1.5 1.5 0 0 1 6 5.5v-1zM7.5 4a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"></path>
+                    <path d="M6 4.5H1.866a1 1 0 1 0 0 1h2.668A6.517 6.517 0 0 0 1.814 9H2.5c.123 0 .244.015.358.043a5.517 5.517 0 0 1 3.185-3.185A1.503 1.503 0 0 1 6 5.5v-1zm3.957 1.358A1.5 1.5 0 0 0 10 5.5v-1h4.134a1 1 0="></path>
+                </svg>
+            </span>
+            <span>ΣΤΡΑΤΥΠ</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navcol-1"
+                aria-controls="navcol-1" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navcol-1">
+            <ul class="navbar-nav me-auto">
+                <!-- Υπηρεσίες Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <span th:text="#{navbar.services}"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                        <li><a class="dropdown-item" th:text="#{navbar.services.desires}"
+                               th:href="@{/api/militaryoffice/declaration}"></a></li>
+                        <li><a class="dropdown-item" th:text="#{navbar.services.userDesires}"
+                               th:href="@{/api/militaryoffice/declaration}"></a></li>
+                        <li><a class="dropdown-item" th:text="#{navbar.services.changes}"
+                               th:href="@{/api/militaryoffice/declaration}"></a></li>
+                        <li><a class="dropdown-item" th:text="#{navbar.services.requests}"
+                               th:href="@{/api/militaryoffice/declaration}"></a></li>
+                    </ul>
+                </li>
+                <!-- Χρήστες Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="usersDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <span th:text="#{navbar.users}"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="usersDropdown">
+                        <li><a class="dropdown-item" th:text="#{navbar.users.configuration}" href="#"></a></li>
+                    </ul>
+                </li>
+                <!-- Ρυθμίσεις Λογαριασμού -->
+                <li class="nav-item">
+                    <a class="nav-link" th:text="#{navbar.accountSettings}" href="#"></a>
+                </li>
+            </ul>
+            <form action="/logout" method="post" style="display: inline;">
+                <button class="btn btn-danger" type="submit">Αποσύνδεση</button>
+            </form>
+        </div>
+    </div>
+</nav>
+<!--Name Navbar -->
+<header th:replace="fragments/NameNavbar :: navbar(${user})"></header>
+
+
+<div class="container mt-3">
+
+    <div class="container mt-5">
+        <!-- Επιλογή μήνα και βαθμού -->
+        <div class="mb-3">
+            <label for="monthSelect" class="form-label">Επιλέξτε Μήνα:</label>
+            <select id="monthSelect" class="form-select" onchange="updateTable()">
+                <!-- Οι μήνες θα προστεθούν δυναμικά -->
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="rankSelect" class="form-label">Επιλέξτε Βαθμό:</label>
+            <select id="rankSelect" class="form-select" onchange="updateTable()">
+                <!-- Οι βαθμοί θα προστεθούν δυναμικά -->
+            </select>
+        </div>
+
+        <!-- Πίνακας με τις δηλώσεις -->
+        <table id="declarationTable" class="table table-bordered text-center">
+            <thead>
+            <tr>
+                <th>Στελέχοι</th>
+                <!-- Οι ημέρες του μήνα θα προστεθούν δυναμικά -->
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Ο πίνακας με τις γραμμές των υπαλλήλων θα προστίθεται δυναμικά -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script>
+
+// Φόρτωση των διαθέσιμων μηνών
+function loadMonths() {
+fetch('/api/user/declaration-months')
+    .then(response => response.json())
+    .then(data => {
+        const monthSelect = document.getElementById('monthSelect');
+        // Φιλτράρουμε τους ενεργούς μήνες
+        const activeMonths = data.filter(month => month.is_active);
+        activeMonths.forEach(month => {
+            const option = document.createElement('option');
+            option.value = `${month.month}-${month.year}`;  // Χρησιμοποιούμε τον μήνα
+            option.textContent = `${month.month}/${month.year}`;  // Κείμενο με τον μήνα και το έτος
+            monthSelect.appendChild(option);
+        });
+        // Αυτόματα επιλέγουμε τον πρώτο ενεργό μήνα
+        if (activeMonths.length > 0) {
+            document.getElementById('monthSelect').value = activeMonths[0].month;
+            updateTable();  // Ενημερώνουμε τον πίνακα
+        }
+    });
+}
+
+// Δημιουργία του πίνακα με τις δηλώσεις
+function updateTable() {
+    const monthValue = document.getElementById('monthSelect').value;
+
+    // Διαχωρισμός της συμβολοσειράς για λήψη μήνα και έτους
+    const [month, year] = monthValue.split('-'); // π.χ. "11-2024" -> ["11", "2024"]
+
+    // Ενημέρωση του πίνακα με τις ημέρες του μήνα
+    generateDaysOfMonth(month, year);
+    console.log(month-year);
+
+
+
+    // Κάνουμε αίτημα στο API για τις δηλώσεις του μήνα και βαθμού
+    fetch(`/api/declerations?month=${month}&year=${year}&rank=${rank}`)
+        .then(response => response.json())
+        .then(data => {
+            // Ανανεώνουμε τον πίνακα με τα δεδομένα
+            updateTableColors(data, month, year);
+        });
+}
+
+// Δημιουργία των ημερών του μήνα στην κεφαλίδα του πίνακα
+function generateDaysOfMonth(month,year) {
+    const daysInMonth = new Date(year, month, 0).getDate(); // Παίρνει τις ημέρες του μήνα
+    console.log(daysInMonth); // φερνει σωστα
+    const thead = document.querySelector('#declarationTable thead tr');
+    thead.innerHTML = '<th>Στελέχη</th>'; // Επαναφορά της πρώτης στήλης για τα στελέχη
+
+    // Προσθήκη των ημερών του μήνα στην κεφαλίδα
+    for (let day = 1; day <= daysInMonth; day++) {
+        const th = document.createElement('th');
+        th.textContent = day;
+        thead.appendChild(th);
+    }
+
+    // Επαναφόρτωση του σώματος του πίνακα
+    generateEmployeeRows();
+}
+
+// Δημιουργία των γραμμών για τα στελέχη
+function generateEmployeeRows() {
+    const tbody = document.querySelector('#declarationTable tbody');
+    tbody.innerHTML = ''; // Καθαρισμός του πίνακα πριν την προσθήκη των νέων γραμμών
+
+    // Παράδειγμα δεδομένων για τα στελέχη (θα μπορούσαν να φορτωθούν από ένα API)
+    const employees = [
+        { name: 'Γιάννης', id: 1 },
+        { name: 'Μαρία', id: 2 }
+    ];
+
+    // Δημιουργία γραμμών για κάθε στέλεχος
+    employees.forEach(employee => {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.textContent = employee.name;
+        tr.appendChild(td);
+
+        // Προσθήκη κελιών για κάθε ημέρα του μήνα
+        const daysInMonth = new Date(2024, document.getElementById('monthSelect').value, 0).getDate();
+        for (let day = 1; day <= daysInMonth; day++) {
+            const td = document.createElement('td');
+            const span = document.createElement('span');
+            span.classList.add('color-dot');
+            span.setAttribute('data-bs-toggle', 'modal');
+            span.setAttribute('data-bs-target', '#declarationModal');
+            span.title = 'Ημερομηνία';
+            td.appendChild(span);
+            tr.appendChild(td);
+        }
+
+        tbody.appendChild(tr);
+    });
+}
+
+// Ενημέρωση των χρωμάτων στον πίνακα
+function updateTableColors(data, month) {
+    const rows = document.querySelector('#declarationTable tbody').rows;
+
+    // Για κάθε row (στελέχη), ανανεώνουμε τα χρώματα για τις ημέρες
+    for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].cells;
+        for (let j = 1; j < cells.length; j++) {
+            const day = j; // Ημέρα του μήνα
+            const declaration = data.find(d => {
+                const date = new Date(d.declarationDate);
+                return date.getDate() === day && date.getMonth() + 1 === parseInt(month);
+            });
+
+            if (declaration) {
+                const color = declaration.declarationType.color;
+                cells[j].querySelector('.color-dot').style.backgroundColor = color;
+            } else {
+                // Αν δεν υπάρχει δήλωση, το χρώμα είναι το πράσινο (Επιθυμία)
+                cells[j].querySelector('.color-dot').style.backgroundColor = '#198754'; // Επιθυμία
+            }
+        }
+    }
+}
+
+// Φόρτωση των διαθέσιμων μηνών
+function loadMonths() {
+fetch('/api/user/declaration-months')
+    .then(response => response.json())
+    .then(data => {
+        const monthSelect = document.getElementById('monthSelect');
+        // Φιλτράρουμε τους ενεργούς μήνες
+        const activeMonths = data.filter(month => month.active);
+        activeMonths.forEach(month => {
+            const option = document.createElement('option');
+            option.value = `${month.month}-${month.year}`;  // Χρησιμοποιούμε τον μήνα
+            option.textContent = `${month.month}/${month.year}`;  // Κείμενο με τον μήνα και το έτος
+            monthSelect.appendChild(option);
+        });
+        // Αυτόματα επιλέγουμε τον πρώτο ενεργό μήνα
+        if (activeMonths.length > 0) {
+            document.getElementById('monthSelect').value = activeMonths[0].month;
+            updateTable();  // Ενημερώνουμε τον πίνακα
+        }
+    });
+}
+
+// Φόρτωση των διαθέσιμων βαθμών
+function loadRanks() {
+    fetch('/api/active-military-ranks')
+        .then(response => response.json())
+        .then(data => {
+            const rankSelect = document.getElementById('rankSelect');
+            data.forEach(rank => {
+                const option = document.createElement('option');
+                option.value = rank.id;
+                option.textContent = rank.abbreviation;
+                rankSelect.appendChild(option);
+            });
+            // Αυτόματα επιλέγουμε τον πρώτο βαθμό
+            updateTable();
+        });
+}
+
+// Φόρτωση δεδομένων αρχικά
+window.onload = function() {
+    loadMonths();
+    loadRanks();
+};
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

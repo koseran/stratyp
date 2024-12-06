@@ -1,0 +1,12 @@
+<!-- Navbar Fragment -->
+<div th:fragment="navbar(user)">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <strong>
+                    <span th:text="${user.kvd_sg.sgName} + ' - ' + ${user.rank.abbreviation} + ' (' + ${user.unit.abbreviation} + ') ' + ${user.name} + ' ' + ${user.getRole().getDisplayName()}"></span>
+                </strong>
+            </div>
+        </div>
+    </div>
+</div>

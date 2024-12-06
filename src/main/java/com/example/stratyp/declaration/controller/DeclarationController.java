@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
-@Controller
-@RequestMapping("/api/user")
+@RestController
+@RequestMapping("/api")
 public class DeclarationController {
 
     private final DeclarationRepository declarationRepository;
@@ -27,7 +27,7 @@ public class DeclarationController {
     private final DeclarationService declarationService;
     private final UserService userService;
 
-    @PostMapping("/declaration/addDeclaration")
+    @PostMapping("/user/declaration/addDeclaration")
     public ResponseEntity<String> savePinnedDates(@RequestBody List<Declarations> pinnedDateRequests, Principal principal) {
         try {
             // Βρίσκουμε τον τρέχοντα χρήστη
@@ -80,7 +80,7 @@ public class DeclarationController {
         }
     }
 
-    @PostMapping("/declaration/delete/{id}")
+    @PostMapping("/user/declaration/delete/{id}")
     public String deleteDeclaration(@PathVariable Long id) {
         System.out.println("Deleting declaration with ID: " + id);
         Declarations declaration = declarationRepository.findById(id).orElse(null);
@@ -92,5 +92,10 @@ public class DeclarationController {
             System.out.println("Declaration not found.");
             return "error";
         }
+    }
+
+    @GetMapping("/decleration")
+    List<Declarations> getAllDeclerations(){
+        return declarationRepository.findAll();
     }
 }

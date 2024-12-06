@@ -13,22 +13,6 @@
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
         }
-        .form-label {
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-        .btn {
-            padding: 10px 20px;
-            font-weight: bold;
-        }
-        .btn-primary {
-            background-color: #0078ff;
-            border: none;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            border: none;
-        }
         .filter-section {
             background-color: #ffffff;
             border: 1px solid #dcdcdc;
@@ -36,10 +20,7 @@
             padding: 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        table thead {
-            background-color: #0078ff;
-            color: white;
-        }
+
     </style>
 </head>
 <body>
@@ -103,37 +84,30 @@
     </div>
 </nav>
 <!--Name Navbar -->
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <strong>
-                <br th:text="${user.kvd_sg.sgName} + ' - ' + ${user.rank.abbreviation} + ' (' +${user.unit.abbreviation}+ ')  '  + ${user.name} + '  ' + ${user.getRole().getDisplayName()}"><br>
-            </strong>
-        </div>
-    </div>
-</div>
+<header th:replace="fragments/navbar :: navbar(${user})"></header>
 
 <!-- Filter Section -->
-<div class="container mt-3 mb-3">
+<div class="container mt-3">
 
-    <div class="filter-section mb-5">
-        <div class="card shadow-sm">
+    <div class="container my-4">
+        <div class="card mb-3">
             <div class="card-body">
-                <h2 class="text-center mb-4" style="font-size: 26px; font-weight: bold; color: #007bff;">Φιλτράρισμα Δηλώσεων</h2>
-
+                <h2 class="text-center mb-4 text-primary">Φιλτράρισμα Δηλώσεων</h2>
                 <form id="filterForm" method="GET" action="/filter-declarations">
-                    <div class="row g-3">
-                        <!-- Ονόματα Στελέχους -->
+                    <div class="row g-2">
                         <div class="col-md-4">
                             <label for="staffName" class="form-label">Ονόματα Στελέχους</label>
                             <input type="text" class="form-control" id="staffName" name="staff_name" placeholder="Εισάγετε ονόματα στελέχους">
                         </div>
-                        <!-- Υπηρεσιακός Ρόλος -->
                         <div class="col-md-4">
                             <label for="serviceRole" class="form-label">Υπηρεσιακός Ρόλος</label>
-                            <input type="text" class="form-control" id="serviceRole" name="service_role" placeholder="Εισάγετε ρόλο">
+                            <select class="form-select" id="serviceRole" name="service_role">
+                                <option value="">Επιλέξτε Μονάδα</option>
+                                <option value="Unit1">Μονάδα 1</option>
+                                <option value="Unit2">Μονάδα 2</option>
+                                <option value="Unit3">Μονάδα 3</option>
+                            </select>
                         </div>
-                        <!-- Μονάδα Υπηρεσίας -->
                         <div class="col-md-4">
                             <label for="serviceUnit" class="form-label">Μονάδα Υπηρεσίας</label>
                             <select class="form-select" id="serviceUnit" name="service_unit">
@@ -144,65 +118,54 @@
                             </select>
                         </div>
                     </div>
-
-                    <div class="row g-3 mt-3">
-                        <!-- Ημερομηνία Δήλωσης Από -->
+                    <div class="row g-2 mt-3">
                         <div class="col-md-6">
                             <label for="declarationDateFrom" class="form-label">Ημερομηνία Δήλωσης από</label>
                             <input type="date" class="form-control" id="declarationDateFrom" name="declaration_date_from">
                         </div>
-                        <!-- Ημερομηνία Δήλωσης Έως -->
                         <div class="col-md-6">
                             <label for="declarationDateTo" class="form-label">Ημερομηνία Δήλωσης έως</label>
                             <input type="date" class="form-control" id="declarationDateTo" name="declaration_date_to">
                         </div>
                     </div>
-
-                    <div class="row g-3 mt-3">
-                        <!-- Λόγος Δήλωσης -->
+                    <div class="row g-2 mt-3">
                         <div class="col-md-6">
                             <label for="declarationReason" class="form-label">Λόγος Δήλωσης</label>
                             <input type="text" class="form-control" id="declarationReason" name="declaration_reason" placeholder="Εισάγετε λόγο δήλωσης">
                         </div>
-                        <!-- Σχόλια Δηλώσεων -->
                         <div class="col-md-6">
                             <label for="declarationComments" class="form-label">Σχόλια Δηλώσεων</label>
                             <input type="text" class="form-control" id="declarationComments" name="declaration_comments" placeholder="Εισάγετε σχόλια">
                         </div>
                     </div>
-
-                    <div class="row mt-4">
-                        <div class="col text-center">
-                            <button type="submit" class="btn btn-primary btn-lg px-4">Φιλτράρισμα</button>
-                            <button type="reset" class="btn btn-secondary btn-lg px-4">Καθαρισμός</button>
-                        </div>
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary">Φιλτράρισμα</button>
+                        <button type="reset" class="btn btn-secondary">Καθαρισμός</button>
                     </div>
                 </form>
             </div>
         </div>
+        <!-- Πίνακας Αποτελεσμάτων -->
+        <table class="table">
+            <thead class="table">
+            <tr>
+                <th>Ημερομηνία Δήλωσης</th>
+                <th>Όνομα Στελέχους</th>
+                <th>Τύπος Δήλωσης</th>
+                <th>Λεπτομέρειες Δήλωσης</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Loop through all declarations and print each one dynamically -->
+            <tr th:each="declaration : ${allDeclarations}">
+                <td th:text="${#dates.format(declaration.declarationDate, 'dd/MM/yyyy')}"></td>
+                <td th:text="${declaration.user.rank.abbreviation} + ' (' + ${declaration.user.unit.abbreviation} + ') ' + ${declaration.user.name}"></td>
+                <td th:text="${declaration.declarationType}"></td>
+                <td th:text="${declaration.declarationDetails}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-
-    <!-- Πίνακας Αποτελεσμάτων -->
-    <table class="table table-bordered table-striped">
-        <thead class="table-primary">
-        <tr>
-            <th>Όνομα Στελέχους</th>
-            <th>Ημερομηνία Δήλωσης</th>
-            <th>Τύπος Δήλωσης</th>
-            <th>Λεπτομέρειες Δήλωσης</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- Example row -->
-        <tr>
-            <td>Γιάννης Παπαδόπουλος</td>
-            <td>2024-12-01 14:30:00</td>
-            <td>Τύπος 1</td>
-            <td>Λεπτομέρειες 1</td>
-        </tr>
-        <!-- Τα δεδομένα προστίθενται δυναμικά -->
-        </tbody>
-    </table>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
