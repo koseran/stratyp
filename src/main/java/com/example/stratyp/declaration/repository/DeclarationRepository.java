@@ -14,7 +14,6 @@ import java.util.Optional;
 
 @Repository
 public interface DeclarationRepository extends JpaRepository<Declarations, Long> {
-    // List<Declarations> findCountByUser(String username); // Επιστρέφει τον αριθμό των δηλώσεων για έναν συγκεκριμένο χρή
     @Query("SELECT COUNT(d) FROM Declarations d WHERE d.user.id = :userId AND FUNCTION('MONTH', d.declarationDate) = :month AND FUNCTION('YEAR', d.declarationDate) = :year")
     long countDeclarationsForUserInMonth(@Param("userId") Long userId, @Param("month") int month, @Param("year") int year);
 
@@ -27,6 +26,7 @@ public interface DeclarationRepository extends JpaRepository<Declarations, Long>
             "ORDER BY D.declarationDate ASC") // Κατά φθίνουσα σειρά, ή ASC για αύξουσα
     List<Declarations> findDeclarationsByASG(@Param("userKvdId") Long userKvdId);
 
+    @Query("SELECT D FROM Declarations D WHERE FUNCTION('MONTH', D.declarationDate) = :month AND FUNCTION('YEAR', D.declarationDate) = :year")
+    List<Declarations> getDeclarationsForMonthAndYear(@Param("month") int month, @Param("year") int year);
 
-    List<Declarations> findByDeclarationDateBetween(LocalDate firstDay, LocalDate lastDay);
 }

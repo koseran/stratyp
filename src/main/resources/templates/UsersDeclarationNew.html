@@ -13,28 +13,6 @@
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
         }
-        .filter-section {
-            background-color: #ffffff;
-            border: 1px solid #dcdcdc;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-                .calendar-day {
-            border: 1px solid #ddd;
-            height: 100px;
-            text-align: center;
-            vertical-align: top;
-            padding: 5px;
-        }
-        .calendar-header {
-            background-color: #f8f9fa;
-            font-weight: bold;
-            text-align: center;
-        }
-        .empty-day {
-            background-color: #f8f9fa;
-        }
 
         .color-dot {
         display: inline-block;
@@ -44,9 +22,6 @@
         margin: 0 auto;
         }
     .bg-success { background-color: #198754 !important; }
-    .bg-danger { background-color: #dc3545 !important; }
-    .bg-warning { background-color: #ffc107 !important; }
-    .table-responsive { margin-top: 20px; }
 
     </style>
 </head>
@@ -115,62 +90,39 @@
 
 
 <div class="container mt-3">
-
-    <div class="container mt-5">
-        <!-- Επιλογή μήνα και βαθμού -->
-        <div class="mb-3">
+    <!-- Επιλογή μήνα και βαθμού -->
+    <div class="row mb-3">
+        <div class="col-md-6">
             <label for="monthSelect" class="form-label">Επιλέξτε Μήνα:</label>
             <select id="monthSelect" class="form-select" onchange="updateTable()">
                 <!-- Οι μήνες θα προστεθούν δυναμικά -->
             </select>
         </div>
-
-        <div class="mb-3">
+        <div class="col-md-6">
             <label for="rankSelect" class="form-label">Επιλέξτε Βαθμό:</label>
             <select id="rankSelect" class="form-select" onchange="updateTable()">
                 <!-- Οι βαθμοί θα προστεθούν δυναμικά -->
             </select>
         </div>
+    </div>
 
-        <!-- Πίνακας με τις δηλώσεις -->
-        <table id="declarationTable" class="table table-bordered text-center">
-            <thead>
+    <!-- Πίνακας με τις δηλώσεις -->
+    <div class="table-responsive">
+        <table id="declarationTable" class="table table-bordered table-hover table-striped text-center">
+            <thead class="bg-primary text-white sticky-top">
             <tr>
                 <th>Στελέχοι</th>
                 <!-- Οι ημέρες του μήνα θα προστεθούν δυναμικά -->
             </tr>
             </thead>
-            <tbody>
+            <tbody class="bg-white">
             <!-- Ο πίνακας με τις γραμμές των υπαλλήλων θα προστίθεται δυναμικά -->
             </tbody>
         </table>
-    </div>
-</div>
+        </div>
 
 
 <script>
-
-// Φόρτωση των διαθέσιμων μηνών
-function loadMonths() {
-fetch('/api/user/declaration-months')
-    .then(response => response.json())
-    .then(data => {
-        const monthSelect = document.getElementById('monthSelect');
-        // Φιλτράρουμε τους ενεργούς μήνες
-        const activeMonths = data.filter(month => month.is_active);
-        activeMonths.forEach(month => {
-            const option = document.createElement('option');
-            option.value = `${month.month}-${month.year}`;  // Χρησιμοποιούμε τον μήνα
-            option.textContent = `${month.month}/${month.year}`;  // Κείμενο με τον μήνα και το έτος
-            monthSelect.appendChild(option);
-        });
-        // Αυτόματα επιλέγουμε τον πρώτο ενεργό μήνα
-        if (activeMonths.length > 0) {
-            document.getElementById('monthSelect').value = activeMonths[0].month;
-            updateTable();  // Ενημερώνουμε τον πίνακα
-        }
-    });
-}
 
 // Δημιουργία του πίνακα με τις δηλώσεις
 function updateTable() {
@@ -180,72 +132,112 @@ function updateTable() {
     const [month, year] = monthValue.split('-'); // π.χ. "11-2024" -> ["11", "2024"]
 
     // Ενημέρωση του πίνακα με τις ημέρες του μήνα
-    generateDaysOfMonth(month, year);
-    console.log(month-year);
+    generateDaysOfMonth(month, year); // στελνει σωστα!
 
-
-
-    // Κάνουμε αίτημα στο API για τις δηλώσεις του μήνα και βαθμού
-    fetch(`/api/declerations?month=${month}&year=${year}&rank=${rank}`)
-        .then(response => response.json())
-        .then(data => {
-            // Ανανεώνουμε τον πίνακα με τα δεδομένα
-            updateTableColors(data, month, year);
-        });
 }
 
 // Δημιουργία των ημερών του μήνα στην κεφαλίδα του πίνακα
-function generateDaysOfMonth(month,year) {
+function generateDaysOfMonth(month, year) {
     const daysInMonth = new Date(year, month, 0).getDate(); // Παίρνει τις ημέρες του μήνα
-    console.log(daysInMonth); // φερνει σωστα
-    const thead = document.querySelector('#declarationTable thead tr');
-    thead.innerHTML = '<th>Στελέχη</th>'; // Επαναφορά της πρώτης στήλης για τα στελέχη
+    const thead = document.querySelector('#declarationTable thead');
+    thead.innerHTML = ''; // Καθαρισμός κεφαλίδας
 
-    // Προσθήκη των ημερών του μήνα στην κεφαλίδα
+    // Δημιουργία γραμμής για τις ημέρες της εβδομάδας
+    const weekDayRow = document.createElement('tr');
+
+    // Δημιουργία κελιού "Ημέρες της Εβδομάδας" που εκτείνεται σε δύο γραμμές
+    const thWeekTitle = document.createElement('th');
+    thWeekTitle.textContent = 'Ημέρες της Εβδομάδας';
+    thWeekTitle.rowSpan = 2; // Εκτείνεται σε δύο γραμμές
+    weekDayRow.appendChild(thWeekTitle);
+
+    // Δημιουργία γραμμής για τους αριθμούς των ημερών
+    const dayRow = document.createElement('tr');
+
+    // Λήψη των ονομάτων των ημερών της εβδομάδας
+    const weekDays = ['Κυρ', 'Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ'];
+
     for (let day = 1; day <= daysInMonth; day++) {
-        const th = document.createElement('th');
-        th.textContent = day;
-        thead.appendChild(th);
+        const date = new Date(year, month - 1, day); // Δημιουργία ημερομηνίας
+        const weekDay = weekDays[date.getDay()]; // Λήψη ημέρας εβδομάδας (0=Κυριακή)
+
+        // Προσθήκη κελιού για την ημέρα της εβδομάδας
+        const thWeekDay = document.createElement('th');
+        thWeekDay.textContent = weekDay;
+        weekDayRow.appendChild(thWeekDay);
+
+        // Προσθήκη κελιού για τον αριθμό της ημέρας
+        const thDay = document.createElement('th');
+        thDay.textContent = day;
+        dayRow.appendChild(thDay);
     }
 
+    // Προσθήκη των γραμμών στο thead
+    thead.appendChild(weekDayRow);
+    thead.appendChild(dayRow);
+
     // Επαναφόρτωση του σώματος του πίνακα
-    generateEmployeeRows();
+    generateEmployeeRows(month, year, daysInMonth);
 }
 
 // Δημιουργία των γραμμών για τα στελέχη
-function generateEmployeeRows() {
+function generateEmployeeRows(month, year, daysInMonth) {
     const tbody = document.querySelector('#declarationTable tbody');
     tbody.innerHTML = ''; // Καθαρισμός του πίνακα πριν την προσθήκη των νέων γραμμών
 
-    // Παράδειγμα δεδομένων για τα στελέχη (θα μπορούσαν να φορτωθούν από ένα API)
-    const employees = [
-        { name: 'Γιάννης', id: 1 },
-        { name: 'Μαρία', id: 2 }
-    ];
+    fetch(`/api/decleration/${year}/${month}`)
+        .then(response => response.json())
+        .then(data => {
+            const userRows = {}; // Αντικείμενο για παρακολούθηση χρηστών και των σειρών τους
 
-    // Δημιουργία γραμμών για κάθε στέλεχος
-    employees.forEach(employee => {
-        const tr = document.createElement('tr');
-        const td = document.createElement('td');
-        td.textContent = employee.name;
-        tr.appendChild(td);
+            data.forEach(declaration => {
+                const userId = declaration.user.id;
+                const declarationDay = new Date(declaration.declarationDate).getDate();
+                const color = declaration.declarationType.color || '#198754'; // Αν δεν υπάρχει χρώμα, ορίζεται το πράσινο
 
-        // Προσθήκη κελιών για κάθε ημέρα του μήνα
-        const daysInMonth = new Date(2024, document.getElementById('monthSelect').value, 0).getDate();
-        for (let day = 1; day <= daysInMonth; day++) {
-            const td = document.createElement('td');
-            const span = document.createElement('span');
-            span.classList.add('color-dot');
-            span.setAttribute('data-bs-toggle', 'modal');
-            span.setAttribute('data-bs-target', '#declarationModal');
-            span.title = 'Ημερομηνία';
-            td.appendChild(span);
-            tr.appendChild(td);
-        }
+                // Εάν ο χρήστης δεν υπάρχει, δημιουργείται νέα γραμμή
+                if (!userRows[userId]) {
+                    const tr = document.createElement('tr');
+                    const tdName = document.createElement('td');
+                    tdName.textContent = declaration.user.name; // Όνομα του στελέχους
+                    tdName.classList.add('sticky-cell'); // Προσθήκη σταθερής στήλης
+                    tr.appendChild(tdName);
 
-        tbody.appendChild(tr);
-    });
+                    // Προσθήκη κελιών για κάθε ημέρα του μήνα
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        const td = document.createElement('td');
+                        const span = document.createElement('span');
+                        span.classList.add('color-dot', 'bg-success');
+                        span.setAttribute('data-bs-toggle', 'modal');
+                        span.setAttribute('data-bs-target', '#declarationModal');
+                        span.title = `Επιθυμία`;
+                        td.appendChild(span);
+                        tr.appendChild(td);
+                    }
+
+                    tbody.appendChild(tr);
+                    userRows[userId] = tr; // Καταχώριση της σειράς για τον χρήστη
+                }
+
+                // Βρίσκουμε τη γραμμή του χρήστη
+                const userRow = userRows[userId];
+                const userCells = userRow.querySelectorAll('td');
+
+                // Γεμίζουμε το κελί της συγκεκριμένης ημέρας με το χρώμα
+                const dayCell = userCells[declarationDay]; // Το πρώτο κελί είναι το όνομα
+                const colorDot = dayCell.querySelector('.color-dot');
+                if (colorDot) {
+                    colorDot.classList.remove('bg-success'); // Αφαίρεση πράσινου αν χρειάζεται
+                    colorDot.style.backgroundColor = color;
+                    colorDot.title = declaration.declarationType?.name || 'Επιθυμία';
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error during fetch:', error);
+        });
 }
+
 
 // Ενημέρωση των χρωμάτων στον πίνακα
 function updateTableColors(data, month) {
@@ -274,25 +266,46 @@ function updateTableColors(data, month) {
 
 // Φόρτωση των διαθέσιμων μηνών
 function loadMonths() {
-fetch('/api/user/declaration-months')
-    .then(response => response.json())
-    .then(data => {
-        const monthSelect = document.getElementById('monthSelect');
-        // Φιλτράρουμε τους ενεργούς μήνες
-        const activeMonths = data.filter(month => month.active);
-        activeMonths.forEach(month => {
-            const option = document.createElement('option');
-            option.value = `${month.month}-${month.year}`;  // Χρησιμοποιούμε τον μήνα
-            option.textContent = `${month.month}/${month.year}`;  // Κείμενο με τον μήνα και το έτος
-            monthSelect.appendChild(option);
+    fetch('/api/user/declaration-months')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Έλεγχος αν τα δεδομένα είναι array
+            if (!Array.isArray(data)) {
+                throw new Error('Invalid data format: expected an array');
+            }
+
+            const monthSelect = document.getElementById('monthSelect');
+            monthSelect.innerHTML = ''; // Καθαρισμός προηγούμενων επιλογών
+
+            // Φιλτράρουμε τους ενεργούς μήνες
+            const activeMonths = data.filter(month => month.active);
+            activeMonths.forEach(month => {
+                const option = document.createElement('option');
+                option.value = `${month.month}-${month.year}`;  // Χρησιμοποιούμε τον μήνα
+                option.textContent = `${month.month}/${month.year}`;  // Κείμενο με τον μήνα και το έτος
+                monthSelect.appendChild(option);
+            });
+
+            // Αυτόματα επιλέγουμε τον πρώτο ενεργό μήνα
+            if (activeMonths.length > 0) {
+                monthSelect.value = `${activeMonths[0].month}-${activeMonths[0].year}`;
+                updateTable();  // Ενημερώνουμε τον πίνακα
+            } else {
+                monthSelect.innerHTML = '<option disabled>Δεν βρέθηκαν ενεργοί μήνες!</option>';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading months:', error);
+            const monthSelect = document.getElementById('monthSelect');
+            monthSelect.innerHTML = '<option disabled>Σφάλμα φόρτωσης μηνών!</option>';
         });
-        // Αυτόματα επιλέγουμε τον πρώτο ενεργό μήνα
-        if (activeMonths.length > 0) {
-            document.getElementById('monthSelect').value = activeMonths[0].month;
-            updateTable();  // Ενημερώνουμε τον πίνακα
-        }
-    });
 }
+
 
 // Φόρτωση των διαθέσιμων βαθμών
 function loadRanks() {
@@ -307,7 +320,7 @@ function loadRanks() {
                 rankSelect.appendChild(option);
             });
             // Αυτόματα επιλέγουμε τον πρώτο βαθμό
-            updateTable();
+            //updateTable();
         });
 }
 

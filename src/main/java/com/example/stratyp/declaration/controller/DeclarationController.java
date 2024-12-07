@@ -98,4 +98,10 @@ public class DeclarationController {
     List<Declarations> getAllDeclerations(){
         return declarationRepository.findAll();
     }
+
+    @GetMapping("/decleration/{year}/{month}")
+    public List<Declarations> getDeclarations(@PathVariable int year, @PathVariable int month) {
+        // Replace with your service call to fetch declarations
+        return declarationRepository.getDeclarationsForMonthAndYear(month, year);
+    }
 }
